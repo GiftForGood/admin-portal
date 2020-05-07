@@ -1,13 +1,13 @@
 ---
 name: Feature request
-about: Create a feature request for the GiftForGood website
+about: Create a feature request for the GiftForGood admin portal
 labels: "c.Feature"
 ---
 
 # Feature request
 
 <!--
-  Before opening a new issue, please search existing issues:  https://github.com/GiftForGood/website/issues?q=is%3Aissue+label%3Ac.Feature
+  Before opening a new issue, please search existing issues:  https://github.com/GiftForGood/admin-portal/issues?q=is%3Aissue+label%3Ac.Feature
 -->
 
 ## Is your feature request related to a problem? Please describe.

@@ -1,13 +1,13 @@
 ---
 name: Bug report
-about: Create a bug report for the GiftForGood website
+about: Create a bug report for the GiftForGood admin portal
 labels: "c.Bug"
 ---
 
 # Bug report
 
 <!--
-  Before opening a new issue, please search existing issues:  https://github.com/GiftForGood/website/issues?q=is%3Aissue+label%3Ac.Bug
+  Before opening a new issue, please search existing issues:  https://github.com/GiftForGood/admin-portal/issues?q=is%3Aissue+label%3Ac.Bug
 -->
 
 ## Describe the bug
