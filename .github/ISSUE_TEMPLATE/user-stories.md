@@ -1,13 +1,13 @@
 ---
 name: User Story
-about: Provide user stories for our GiftForGood website
+about: Provide user stories for our GiftForGood admin portal
 labels: "c.UserStory"
 ---
 
 # User Story
 
 <!--
-  https://github.com/GiftForGood/website/issues?q=is%3Aissue+label%3Ac.UserStory
+  https://github.com/GiftForGood/admin-portal/issues?q=is%3Aissue+label%3Ac.UserStory
 -->
 
 ## Describe the user story in detail.
