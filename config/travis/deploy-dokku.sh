@@ -1,5 +1,5 @@
 #!/bin/bash
-openssl aes-256-cbc -K $encrypted_2a03bfc35e23_key -iv $encrypted_2a03bfc35e23_iv -in .travis/dokku-deploy.key.enc -out .travis/dokku-deploy.key -d
+openssl aes-256-cbc -K $encrypted_9d581fdc29c5_key -iv $encrypted_9d581fdc29c5_iv -in .travis/dokku-deploy-admin.key.enc -out .travis/dokku-deploy-admin.key -d
 eval "$(ssh-agent -s)";
 chmod 600 .travis/dokku-deploy.key;
 ssh-add .travis/dokku-deploy.key;
