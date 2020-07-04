@@ -1,7 +1,8 @@
 import React from 'react';
+import Error from 'next/error';
+import ActionPage from '../src/components/action/pages/ActionPage';
 import media from '@kiwicom/orbit-components/lib/utils/mediaQuery';
 import styled, { css } from 'styled-components';
-import LoginPage from '../src/components/login/pages/LoginPage';
 
 const Wrapper = styled.div`
 	display: flex;
@@ -40,16 +41,38 @@ const Panel = styled.div`
 	`)};
 `;
 
-const IndexPage = () => {
+export async function getServerSideProps({ params, req, res, query }) {
+	const url = req.url;
+	const { mode } = query; // signIn
+	const { oobCode, apiKey, continueUrl } = query;
+	let isError = true;
+	if (mode && oobCode && apiKey) {
+		isError = false;
+	}
+	return {
+		props: {
+			isError,
+			mode,
+			oobCode,
+			continueUrl,
+			url,
+		},
+	};
+}
+
+const Action = ({ isError, url, continueUrl }) => {
+	if (isError) {
+		return <Error statusCode={404} />;
+	}
 	return (
 		<Wrapper>
 			<Container>
 				<Panel>
-					<LoginPage />
+					<ActionPage url={url} continueUrl={continueUrl} />
 				</Panel>
 			</Container>
 		</Wrapper>
 	);
 };
 
-export default IndexPage;
+export default Action;
