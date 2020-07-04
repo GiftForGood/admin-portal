@@ -12,6 +12,7 @@ class AuthAPI {
 		const url = BASE_URL + '/';
 		const actionCodeSettings = {
 			url: url,
+			handleCodeInApp: true,
 		};
 
 		return firebaseAuth.sendSignInLinkToEmail(email, actionCodeSettings);
