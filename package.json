@@ -18,11 +18,11 @@
   },
   "scripts": {
     "dev": "next",
+    "dev-local": "next --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start -p $PORT",
-    "export": "next build && next export",
-    "lint": "prettier --check pages/*.js",
-    "format": "prettier --write pages/*.js"
+    "lint": "prettier --check '**/*.js'",
+    "format": "prettier --write '**/*.js'"
   },
   "eslintConfig": {
     "extends": "react-app"
