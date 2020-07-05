@@ -24,16 +24,21 @@ const Login = () => {
   
   const handleSubmitEmail = async (values) => {
     try {
+			setShowAlert(false);
       setIsLoading(true);
-      const { email } = values;
-      await api.auth.sendSignInLinkToEmail(email);
-      setEmailLocalStorage(email);
-
+			const { email } = values;
+			const isAdmin = await api.auth.isAdministrator(email);
+			if (isAdmin) {
+				await api.auth.sendSignInLinkToEmail(email);
+				setEmailLocalStorage(email);
+			} else {
+				throw new Error("The email does not belong to an administrator")
+			}
     } catch(error) {
       setIsLoading(false);
       displayAlert('Error', error.message, 'critical');
     }
-  }
+	}
 
 	const validationSchema = Yup.object().shape({
 		email: Yup.string().email().required(''),
