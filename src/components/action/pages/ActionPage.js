@@ -12,7 +12,8 @@ const ActionPage = ({ url, continueUrl }) => {
 	const router = useRouter();
 
 	const signIn = async () => {
-		if (api.auth.isSignInWithEmailLink(BASE_URL + url)) {
+		const isSignInWithEmailLink = await api.auth.isSignInWithEmailLink(url)
+		if (isSignInWithEmailLink) {
 			let email = emailLocalStorage;
 			if (emailLocalStorage === '') {
 				email = window.prompt('Please provide your email for confirmation');
