@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "cloudinary-react": "^1.5.0",
+    "cookie": "^0.4.1",
     "cors": "^2.8.5",
     "dotenv-webpack": "^1.7.0",
     "firebase": "^7.15.5",
