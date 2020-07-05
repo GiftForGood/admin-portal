@@ -24,6 +24,7 @@ const Login = () => {
   
   const handleSubmitEmail = async (values) => {
     try {
+			formik.setSubmitting(false);
 			setShowAlert(false);
       setIsLoading(true);
 			const { email } = values;
