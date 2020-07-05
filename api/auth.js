@@ -1,6 +1,8 @@
 import { db, firebaseAuth, firebaseStorage } from '../utils/firebase';
 import { BASE_URL } from '../utils/constants/siteUrl';
 
+const administratorsCollection = db.collection('administrators');
+
 class AuthAPI {
 	/**
 	 * Send the authentication link to the user's email
@@ -32,11 +34,43 @@ class AuthAPI {
 	 * @param {string} email
 	 * @param {string} url of the link sent to the user
 	 * @throws {FirebaseError}
-	 * @return {Promise}
+	 * @return {array} [token, userDoc]
+	 *  token: JWT
+   *  userDoc: Firebase document that contains the userInfo in the db
 	 */
 	async signInWithEmailLink(email, url) {
-		return firebaseAuth.signInWithEmailLink(email, url);
+		await firebaseAuth.signInWithEmailLink(email, url);
+		const token = await firebaseAuth.currentUser.getIdToken();
+		const userProfile = firebaseAuth.currentUser;
+		const userDoc = await this._updateAdministratorLoginTime(userProfile.uid);
+
+		return [token, userDoc]
 	}
+
+	/**
+	 * Pre login check if the email given belongs to an administrator
+	 * @param {string} email 
+	 */
+	async isAdministrator(email) {
+		const snapshot = await administratorsCollection.where('email', '==', email).get();
+		if (snapshot.empty) {
+			return false;
+		}  
+
+		return true;
+	}
+
+	async _updateAdministratorLoginTime(id) {
+    const userDoc = administratorsCollection.doc(id);
+
+    const data = {
+      lastLoggedInDateTime: Date.now(),
+    };
+    await userDoc.update(data);
+
+    return userDoc.get();
+  }
+
 }
 
 export default AuthAPI;
