@@ -52,9 +52,9 @@ export async function getServerSideProps({ params, req, res, query }) {
 	return {
 		props: {
 			isError,
-			mode,
-			oobCode,
-			continueUrl,
+			mode: mode || null,
+      oobCode: oobCode || null,
+      continueUrl: continueUrl || null,
 			url,
 		},
 	};
