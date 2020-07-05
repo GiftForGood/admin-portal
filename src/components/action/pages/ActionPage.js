@@ -11,25 +11,27 @@ const ActionPage = ({ url, continueUrl }) => {
 	const [emailLocalStorage, setEmailLocalStorage] = useLocalStorage('email', '');
 	const router = useRouter();
 
-	useEffect(() => {
-		if (url && continueUrl) {
-			if (api.auth.isSignInWithEmailLink(BASE_URL + url)) {
-				let email = emailLocalStorage;
-				if (emailLocalStorage === '') {
-					email = window.prompt('Please provide your email for confirmation');
-				}
-				api.auth
-					.signInWithEmailLink(email, BASE_URL + url)
-					.then((response) => {
-						setEmailLocalStorage(''); // clear email from storage
-						router.replace('/dashboard');
-					})
-					.catch((error) => {
-						setIsError(true);
-					});
-			} else {
+	const signIn = async () => {
+		if (api.auth.isSignInWithEmailLink(BASE_URL + url)) {
+			let email = emailLocalStorage;
+			if (emailLocalStorage === '') {
+				email = window.prompt('Please provide your email for confirmation');
+			}
+			try {
+				await api.auth.signInWithEmailLink(email, BASE_URL + url)
+				setEmailLocalStorage(''); // clear email from storage
+				router.replace('/dashboard');
+			} catch(error) {
 				setIsError(true);
 			}
+		} else {
+			setIsError(true);
+		}
+	}
+
+	useEffect(() => {
+		if (url && continueUrl) {
+			signIn();
 		}
 	}, []);
 
