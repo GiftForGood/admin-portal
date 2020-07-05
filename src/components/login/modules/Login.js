@@ -24,7 +24,6 @@ const Login = () => {
   
   const handleSubmitEmail = async (values) => {
     try {
-			formik.setSubmitting(false);
 			setShowAlert(false);
       setIsLoading(true);
 			const { email } = values;
@@ -37,7 +36,8 @@ const Login = () => {
 			}
     } catch(error) {
       setIsLoading(false);
-      displayAlert('Error', error.message, 'critical');
+			displayAlert('Error', error.message, 'critical');
+			formik.setSubmitting(false);
     }
 	}
 
