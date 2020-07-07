@@ -5,6 +5,7 @@ import Error from 'next/error';
 import useLocalStorage from '../../../../utils/hooks/useLocalStorage';
 import { Loading } from '@kiwicom/orbit-components';
 import { useRouter } from 'next/router';
+import client from '../../../../utils/axios';
 
 const ActionPage = ({ url, continueUrl }) => {
 	const [isError, setIsError] = useState(false);
@@ -19,7 +20,14 @@ const ActionPage = ({ url, continueUrl }) => {
 				email = window.prompt('Please provide your email for confirmation');
 			}
 			try {
-				await api.auth.signInWithEmailLink(email, BASE_URL + url)
+				const [token, userDoc] = await api.auth.signInWithEmailLink(email, BASE_URL + url)
+				let response = await client.post('/api/sessionLogin', { token });
+				if (response.status === 200) {
+					router.push('/');
+				} else {
+					console.error(response.error);
+					throw response.error;
+				}
 				setEmailLocalStorage(''); // clear email from storage
 				router.replace('/dashboard');
 			} catch(error) {
