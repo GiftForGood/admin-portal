@@ -2,6 +2,7 @@ import React from 'react';
 import media from '@kiwicom/orbit-components/lib/utils/mediaQuery';
 import styled, { css } from 'styled-components';
 import LoginPage from '../src/components/login/pages/LoginPage';
+import { isAuthenticated } from '../utils/authentication/authentication';
 
 const Wrapper = styled.div`
 	display: flex;
@@ -39,6 +40,20 @@ const Panel = styled.div`
 		width: 40%;
 	`)};
 `;
+
+
+export async function getServerSideProps({ params, req, res, query }) {
+	let data = await isAuthenticated(req, res);
+	if (data) {
+    res.writeHead(302, { Location: '/dashboard' });
+    res.end();
+  }
+	return {
+		props: {
+			user: data.user || null
+		},
+	};
+}
 
 const IndexPage = () => {
 	return (
