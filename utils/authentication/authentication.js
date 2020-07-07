@@ -18,7 +18,7 @@ export async function isAuthenticated(req, res, destination = {}) {
       },
     });
     if (response.status === 200) {
-      return response.data;;
+      return response.data;
     }
     if (!destination.hasOwnProperty('Location')) {
       return null;
