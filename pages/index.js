@@ -49,7 +49,7 @@ export async function getServerSideProps({ params, req, res, query }) {
   }
   return {
     props: {
-      user: data.user || null,
+      user: (data && data.user) || null,
     },
   };
 }

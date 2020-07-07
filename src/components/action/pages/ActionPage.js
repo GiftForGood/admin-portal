@@ -20,7 +20,10 @@ const ActionPage = ({ url, continueUrl }) => {
         email = window.prompt('Please provide your email for confirmation');
       }
       try {
-        const [token, userDoc] = await api.auth.signInWithEmailLink(email, BASE_URL + url);
+        const [token, userProfile, userDoc] = await api.auth.signInWithEmailLink(email, BASE_URL + url);
+        if (!userProfile.emailVerified) {
+          throw Error('Not Verified');
+        }
         let response = await client.post('/api/sessionLogin', { token });
         if (response.status === 200) {
           router.push('/');

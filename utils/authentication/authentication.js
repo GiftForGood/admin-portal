@@ -12,6 +12,9 @@ import client from '../axios';
  */
 export async function isAuthenticated(req, res, destination = {}) {
   try {
+    if (!req.headers.cookie) {
+      throw new Error('Not Authenticated');;
+    }
     const response = await client.get('/api/silentLogin', {
       headers: {
         cookie: req.headers.cookie,
@@ -25,6 +28,9 @@ export async function isAuthenticated(req, res, destination = {}) {
     }
     throw new Error('Not Authenticated');
   } catch (error) {
+    if (!destination.hasOwnProperty('Location')) {
+      return null;
+    }
     res.writeHead(302, destination);
     res.end();
     return null;
