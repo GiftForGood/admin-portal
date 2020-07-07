@@ -43,8 +43,7 @@ class AuthAPI {
     const token = await firebaseAuth.currentUser.getIdToken();
     const userProfile = firebaseAuth.currentUser;
     const userDoc = await this._updateAdministratorLoginTime(userProfile.uid);
-
-    return [token, userDoc];
+    return [token, userProfile, userDoc];
   }
 
   /**
@@ -58,6 +57,13 @@ class AuthAPI {
     }
 
     return true;
+	}
+	
+	/**
+   * Logout a user (admin)
+   */
+  async logout() {
+    firebaseAuth.signOut();
   }
 
   async _updateAdministratorLoginTime(id) {
