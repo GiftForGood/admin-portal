@@ -1,8 +1,19 @@
 import React from 'react';
+import { isAuthenticated } from '../utils/authentication/authentication';
 
-const Dashboard = () => {
+export async function getServerSideProps({ params, req, res, query }) {
+  let data = await isAuthenticated(req, res, { Location: '/' });
+	return {
+		props: {
+			user: data.user || null
+		},
+	};
+}
+
+
+const Dashboard = ({ user }) => {
   return (
-    <div>Dashboard</div>
+    <div>Dashboard {user && user.email}</div>
   )
 }
 
