@@ -1,4 +1,4 @@
-import client from '../axios';
+import { client } from '../axios';
 
 /**
  * Checks if a user is authenticated or not.

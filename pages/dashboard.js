@@ -1,7 +1,7 @@
 import React from 'react';
 import { isAuthenticated } from '../utils/authentication/authentication';
 import api from '../api';
-import client from '../utils/axios';
+import { client } from '../utils/axios';
 
 export async function getServerSideProps({ params, req, res, query }) {
   let data = await isAuthenticated(req, res, { Location: '/' });

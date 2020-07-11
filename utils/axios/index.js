@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASE_URL } from '../constants/siteUrl';
+import { BASE_URL, CLOUD_FUNCTIONS_URL } from '../constants/siteUrl';
 
 const headers = { Accept: 'application/json', 'Access-Control-Allow-Origin': '*' };
 const params = { format: 'json' };
@@ -12,4 +12,10 @@ const client = axios.create({
   params,
 });
 
-export default client;
+const cloudFunctionClient = axios.create({
+  baseURL: CLOUD_FUNCTIONS_URL,
+  withCredentials: false,
+  headers
+})
+
+export { client, cloudFunctionClient };

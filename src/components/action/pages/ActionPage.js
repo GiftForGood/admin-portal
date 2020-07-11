@@ -5,7 +5,7 @@ import Error from 'next/error';
 import useLocalStorage from '../../../../utils/hooks/useLocalStorage';
 import { Loading } from '@kiwicom/orbit-components';
 import { useRouter } from 'next/router';
-import client from '../../../../utils/axios';
+import { client } from '../../../../utils/axios';
 
 const ActionPage = ({ url, continueUrl }) => {
   const [isError, setIsError] = useState(false);
