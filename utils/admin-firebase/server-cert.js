@@ -1,5 +1,5 @@
 const adminPrivateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY;
-const adminPrivateKeyParsed = adminPrivateKey.replace(/\\n/g, '\n')
+const adminPrivateKeyParsed = adminPrivateKey.replace(/\\n/g, '\n');
 
 module.exports = {
   type: 'service_account',
