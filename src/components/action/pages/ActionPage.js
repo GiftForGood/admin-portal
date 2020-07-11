@@ -38,7 +38,7 @@ const ActionPage = ({ url, continueUrl }) => {
         setIsError(true);
       }
     } else {
-      console.error("Is not sign in with email link");
+      console.error('Is not sign in with email link');
       setIsError(true);
     }
   };
