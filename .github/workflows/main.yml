@@ -15,7 +15,9 @@ jobs:
         with:
           node-version: 10
       - name: Update NPM
-        run: npm i -g npm 
+        run: npm i -g npm
+      - name: Install packages
+        run: npm install 
       - name: Run Prettier 
         run: npm run lint
       - name: Build
