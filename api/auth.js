@@ -57,9 +57,9 @@ class AuthAPI {
     }
 
     return true;
-	}
-	
-	/**
+  }
+
+  /**
    * Logout a user (admin)
    */
   async logout() {
