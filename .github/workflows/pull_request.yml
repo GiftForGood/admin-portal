@@ -21,3 +21,4 @@ jobs:
         run: npm run build
         env:
           FIREBASE_API_KEY: ${{secrets.FIREBASE_API_KEY}}
+          FIREBASE_PROJECT_ID: ${{secrets.FIREBASE_PROJECT_ID}}
