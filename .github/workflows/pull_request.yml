@@ -14,7 +14,7 @@ jobs:
       - name: Update NPM
         run: npm i -g npm 
       - name: Install packages
-        run: yarn 
+        run: npm install 
       - name: Run Prettier 
         run: npm run lint
       - name: Build
