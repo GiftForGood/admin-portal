@@ -67,7 +67,7 @@ class AuthAPI {
    * @param {string} password 
    * @param {string} name Name of the new admin 
    * @throws {AuthError}
-   * @returns {array} [newAdminProfile, newAdminDoc]
+   * @returns {array} [newAdminProfile, newAdmin]
    */
   async registerNewAccount(email, password, name) {
     const idToken = await firebaseAuth.currentUser.getIdToken();
