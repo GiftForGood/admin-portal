@@ -34,9 +34,11 @@ const ActionPage = ({ url, continueUrl }) => {
         setEmailLocalStorage(''); // clear email from storage
         router.replace('/dashboard');
       } catch (error) {
+        console.error(error.message);
         setIsError(true);
       }
     } else {
+      console.error('Is not sign in with email link');
       setIsError(true);
     }
   };
