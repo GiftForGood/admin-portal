@@ -15,6 +15,6 @@ const client = axios.create({
 const cloudFunctionClient = axios.create({
   baseURL: CLOUD_FUNCTIONS_URL,
   withCredentials: false,
-})
+});
 
 export { client, cloudFunctionClient };
