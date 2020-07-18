@@ -17,7 +17,10 @@ class AdminsAPI {
    */
   async getAll(orderBy = ORDER_BY.NAME, isReverse = false) {
     if (!isValidOrderBy(orderBy)) {
-      return new AdminError('invalid-parameters', `${orderBy} is not a valid order by type. Only ${Object.values(ORDER_BY)} are valid.`); 
+      return new AdminError(
+        'invalid-parameters',
+        `${orderBy} is not a valid order by type. Only ${Object.values(ORDER_BY)} are valid.`
+      );
     }
 
     let sortOrder = 'asc';
@@ -31,7 +34,7 @@ class AdminsAPI {
 
   /**
    * Get all the admin infos created by an admin
-   * @param {string} createdAdminId 
+   * @param {string} createdAdminId
    * @param {string} orderBy Check constants/admin.js to see all the valid order type
    * @param {boolean} isReverse Indicates if the query should be ordered in reverse
    * @throws {AdminError}
@@ -40,7 +43,10 @@ class AdminsAPI {
    */
   async getAdminsCreatedByAdmin(createdAdminId, orderBy = ORDER_BY.NAME, isReverse = false) {
     if (!isValidOrderBy(orderBy)) {
-      return new AdminError('invalid-parameters', `${orderBy} is not a valid order by type. Only ${Object.values(ORDER_BY)} are valid.`); 
+      return new AdminError(
+        'invalid-parameters',
+        `${orderBy} is not a valid order by type. Only ${Object.values(ORDER_BY)} are valid.`
+      );
     }
 
     let sortOrder = 'asc';
@@ -48,24 +54,27 @@ class AdminsAPI {
       sortOrder = 'desc';
     }
 
-    const snapshot = await administratorsCollection.where('createdBy.adminId', '==', createdAdminId).orderBy(orderBy, sortOrder).get();
+    const snapshot = await administratorsCollection
+      .where('createdBy.adminId', '==', createdAdminId)
+      .orderBy(orderBy, sortOrder)
+      .get();
     return snapshot.docs;
   }
 
   /**
    * Get an admin info
-   * @param {string} id 
+   * @param {string} id
    * @throws {FirebaseError}
    * @return {object} A firebase document of the admin info
    */
   async get(id) {
     return administratorsCollection.doc(id).get();
   }
-  
+
   /**
    * Create a new admin from an existing account
-   * @param {string} email 
-   * @param {string} name 
+   * @param {string} email
+   * @param {string} name
    * @throws {AdminError}
    * @return {array} [newAdminProfile, newAdminInfo]
    */
@@ -94,9 +103,9 @@ class AdminsAPI {
 
   /**
    * Create a new admin with a new account
-   * @param {string} email 
-   * @param {string} password 
-   * @param {string} name 
+   * @param {string} email
+   * @param {string} password
+   * @param {string} name
    * @throws {AdminError}
    * @return {array} [newAdminProfile, newAdminInfo]
    */
