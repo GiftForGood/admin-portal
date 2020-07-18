@@ -1,12 +1,3 @@
-export const FILTER = {
-  ALL: 'all',
-  CREATED_ADMIN: 'createdBy.adminId'
-};
-
-export const isValidFilter = (filter) => {
-  return Object.values(FILTER).includes(filter);
-};
-
 export const ORDER_BY = {
   NAME: 'name',
   JOIN_DATE: 'joinedDateTime',
