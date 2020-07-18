@@ -1,7 +1,5 @@
-import { db, firebaseAuth, firebaseStorage } from '../utils/firebase';
+import { db, firebaseAuth } from '../utils/firebase';
 import { BASE_URL } from '../utils/constants/siteUrl';
-import { cloudFunctionClient } from '../utils/axios';
-import AuthError from './error/authError';
 
 const administratorsCollection = db.collection('administrators');
 
@@ -59,68 +57,6 @@ class AuthAPI {
     }
 
     return true;
-  }
-
-  /**
-   * Register an admin that does not have an existing account
-   * @param {string} email
-   * @param {string} password
-   * @param {string} name Name of the new admin
-   * @throws {AuthError}
-   * @returns {array} [newAdminProfile, newAdmin]
-   */
-  async registerNewAccount(email, password, name) {
-    const idToken = await firebaseAuth.currentUser.getIdToken();
-    const adminId = firebaseAuth.currentUser.uid;
-    const data = {
-      rootAdminId: adminId,
-      rootAdminToken: idToken,
-      email: email,
-      password: password,
-      name: name,
-    };
-
-    const res = await cloudFunctionClient.post('/registerAdminWithNewAccount', data);
-    const resData = res.data;
-
-    if (res.status != 200) {
-      throw new AuthError(resData.error.code, resData.error.message);
-    }
-    if (resData.error.code !== 'admin-register/success') {
-      throw new AuthError(resData.error.code, resData.error.message);
-    }
-
-    return [resData.data.profile, resData.data.info];
-  }
-
-  /**
-   * Register an admin that have an existing account
-   * @param {string} email
-   * @param {string} name Name of the new admin
-   * @throws {AuthError}
-   * @returns {array} [newAdminProfile, newAdmin]
-   */
-  async registerExistingAccount(email, name) {
-    const idToken = await firebaseAuth.currentUser.getIdToken();
-    const adminId = firebaseAuth.currentUser.uid;
-    const data = {
-      rootAdminId: adminId,
-      rootAdminToken: idToken,
-      email: email,
-      name: name,
-    };
-
-    const res = await cloudFunctionClient.post('/registerAdminWithExistingAccount', data);
-    const resData = res.data;
-
-    if (res.status != 200) {
-      throw new AuthError(resData.error.code, resData.error.message);
-    }
-    if (resData.error.code !== 'admin-register/success') {
-      throw new AuthError(resData.error.code, resData.error.message);
-    }
-
-    return [resData.data.profile, resData.data.info];
   }
 
   /**
