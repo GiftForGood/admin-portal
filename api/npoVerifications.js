@@ -12,7 +12,7 @@ class NPOVerifications {
   /**
    * Get a batch of npo verifications. Only return results of NPO_VERIFICATION_BATCH_SIZE
    * @param {string} statusFilterType Check constants/npoVerification.js to see all the valid status filter type
-   * @param {string} orderBy heck constants/npoVerification.js to see all the valid order type
+   * @param {string} orderBy Check constants/npoVerification.js to see all the valid order type
    * @param {boolean} isReverse Indicates if the query should be ordered in reverse
    * @param {object} lastQueriedDocument last queried firebase document to start the query after. If the field is not given, the query will start from the first document
    * @throws {NPOVerificationError}
