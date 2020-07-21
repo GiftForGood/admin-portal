@@ -2,6 +2,7 @@ import React from 'react';
 import { isAuthenticated } from '../utils/authentication/authentication';
 import api from '../api';
 import { client } from '../utils/axios';
+import SessionProvider from '../src/components/session/modules/SessionProvider';
 
 export async function getServerSideProps({ params, req, res, query }) {
   let data = await isAuthenticated(req, res, { Location: '/' });
@@ -22,10 +23,10 @@ const Dashboard = ({ user }) => {
     }
   };
   return (
-    <div>
+    <SessionProvider user={user}>
       <div>Dashboard {user && user.email}</div>
       <button onClick={() => logout()}>Logout</button>
-    </div>
+    </SessionProvider>
   );
 };
 
