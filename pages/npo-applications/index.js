@@ -1,6 +1,8 @@
 import React from 'react';
 import { isAuthenticated } from '../../utils/authentication/authentication';
 import SessionProvider from '../../src/components/session/modules/SessionProvider';
+import MaxWidthContainer from '../../src/components/containers/MaxWidthContainer';
+
 import dynamic from 'next/dynamic';
 const TopNavigationBar = dynamic(() => import('../../src/components/navbar/modules/TopNavigationBar'), { ssr: false });
 
@@ -18,7 +20,7 @@ const NpoApplications = ({ user }) => {
     <SessionProvider user={user}>
       <TopNavigationBar />
 
-      <div>NPO applications {user && user.email}</div>
+      <MaxWidthContainer>NPO applications {user && user.email}</MaxWidthContainer>
     </SessionProvider>
   );
 };
