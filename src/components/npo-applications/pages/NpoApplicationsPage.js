@@ -5,10 +5,12 @@ import { STATUS_FILTER_TYPE, STATUS } from '../../../../utils/constants/npoVerif
 import api from '../../../../api';
 import { getFormattedDateTime } from '../../../../utils/time/time';
 import { ChevronDown } from '@kiwicom/orbit-components/lib/icons';
+import { useRouter } from 'next/router';
 
 const NpoApplicationsPage = () => {
   const [filterStatus, setFilterStatus] = useState();
   const [applications, setApplications] = useState([]);
+  const router = useRouter();
 
   const getAllApplications = async () => {
     try {
@@ -26,6 +28,10 @@ const NpoApplicationsPage = () => {
   const onSelectedFilter = (status) => {
     setFilterStatus(status);
   };
+
+  const onReviewClicked = (npoApplicationId) => {
+    router.push(`/npo-applications/${npoApplicationId}`);
+  }
 
   return (
     <Stack>
@@ -80,7 +86,7 @@ const NpoApplicationsPage = () => {
               </TableCell>
               <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
                 <Stack direction="row">
-                  <Button size="small">Review</Button>
+                  <Button size="small" onClick={() => onReviewClicked(appSnapshot.id)}>Review</Button>
                 </Stack>
               </TableCell>
             </TableRow>
