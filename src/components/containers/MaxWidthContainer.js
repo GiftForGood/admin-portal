@@ -6,5 +6,5 @@ const MaxWidthContainer = styled.div`
   margin: 0 auto;
   margin-top: 50px;
   margin-bottom: 40px;
-`
+`;
 export default MaxWidthContainer;

@@ -12,7 +12,7 @@ const ResubmissionNpoVerificationModal = ({ show, onHide, onClickRequest, title,
   const onClickSubmit = () => {
     if (reason.length > 0) {
       setError('');
-      onClickRequest(reason)
+      onClickRequest(reason);
       onHide();
       setReason('');
     } else {
@@ -23,7 +23,7 @@ const ResubmissionNpoVerificationModal = ({ show, onHide, onClickRequest, title,
   const hide = () => {
     onHide();
     setReason('');
-  }
+  };
 
   return (
     <Modal size="normal">
@@ -46,7 +46,9 @@ const ResubmissionNpoVerificationModal = ({ show, onHide, onClickRequest, title,
           <Button type="secondary" onClick={hide}>
             Cancel
           </Button>
-          <Button onClick={onClickSubmit} type="secondary">Request resubmission</Button>
+          <Button onClick={onClickSubmit} type="secondary">
+            Request resubmission
+          </Button>
         </Stack>
       </ModalFooter>
     </Modal>
