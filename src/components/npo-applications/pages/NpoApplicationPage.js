@@ -33,8 +33,14 @@ const LeftSideButtons = ({ admin, npoApplicationId, status }) => {
           setButtonText('Lock for review');
         }
       } else {
-        setIsDisabled(true);
-        setButtonText('Someone reviewing');
+        // not mine
+        if (isReviewing) {
+          setIsDisabled(true);
+          setButtonText('Someone reviewing');
+        } else {
+          setIsDisabled(false);
+          setButtonText('Lock for review');
+        }
       }
     } else {
       setIsDisabled(false);
@@ -85,12 +91,44 @@ const LeftSideButtons = ({ admin, npoApplicationId, status }) => {
   );
 };
 
-const RightSideButtons = () => {
+const RightSideButtons = ({ admin, npoApplicationId, status }) => {
+  const [isDisabled, setIsDisabled] = useState(true);
+  const user = useUser();
+
+  useEffect(() => {
+    if (admin && admin.id) {
+      const isMine = isMeHandlingApplication(admin);
+      const isReviewing = status === STATUS.REVIEWING;
+      if (isMine) {
+        if (isReviewing) {
+          setIsDisabled(false);
+        } else {
+          setIsDisabled(true); // mine && not reviewing ==> cannot accept/reject/resubmission
+        }
+      } else {
+        // not mine ==> cannot accept/reject/resubmission
+        setIsDisabled(true);
+      }
+    } else {
+      setIsDisabled(true);
+    }
+  }, [admin, user]);
+
+  const isMeHandlingApplication = (admin) => {
+    if (user) {
+      return user.adminId === admin.id;
+    }
+  };
+
   return (
     <Stack inline direction="row" spacing="condensed" justify="end">
-      <Button type="secondary">Resubmission</Button>
-      <Button type="critical">Reject</Button>
-      <Button>Accept</Button>
+      <Button disabled={isDisabled} type="secondary">
+        Resubmission
+      </Button>
+      <Button disabled={isDisabled} type="critical">
+        Reject
+      </Button>
+      <Button disabled={isDisabled}>Accept</Button>
     </Stack>
   );
 };
@@ -116,7 +154,11 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
             npoApplicationId={npoApplicationId}
             status={npoApplicationDetails.status}
           />
-          <RightSideButtons />
+          <RightSideButtons
+            admin={npoApplicationDetails.admin ? npoApplicationDetails.admin : null}
+            npoApplicationId={npoApplicationId}
+            status={npoApplicationDetails.status}
+          />
         </Stack>
         <BadgeStatus status={npoApplicationDetails.status} />
 
