@@ -13,10 +13,16 @@ const RejectNpoVerificationModal = ({ show, onHide, onClickReject, title, descri
       setError('');
       onClickReject(reason)
       onHide();
+      setReason('');
     } else {
       setError('A reason must be provided!');
     }
   };
+
+  const hide = () => {
+    onHide();
+    setReason('');
+  }
 
   return (
     <Modal size="normal">
@@ -36,7 +42,7 @@ const RejectNpoVerificationModal = ({ show, onHide, onClickReject, title, descri
       </ModalSection>
       <ModalFooter>
         <Stack direction="row" justify="end" align="center">
-          <Button type="secondary" onClick={onHide}>
+          <Button type="secondary" onClick={hide}>
             Cancel
           </Button>
           <Button onClick={onClickSubmit} type="critical">Reject</Button>

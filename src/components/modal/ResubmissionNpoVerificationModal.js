@@ -5,6 +5,7 @@ import Modal, { ModalSection, ModalFooter } from '@kiwicom/orbit-components/lib/
 const ResubmissionNpoVerificationModal = ({ show, onHide, onClickRequest, title, description }) => {
   const [error, setError] = useState('');
   const [reason, setReason] = useState('');
+
   if (!show) {
     return <div></div>;
   }
@@ -13,10 +14,16 @@ const ResubmissionNpoVerificationModal = ({ show, onHide, onClickRequest, title,
       setError('');
       onClickRequest(reason)
       onHide();
+      setReason('');
     } else {
       setError('A reason must be provided!');
     }
   };
+
+  const hide = () => {
+    onHide();
+    setReason('');
+  }
 
   return (
     <Modal size="normal">
@@ -36,7 +43,7 @@ const ResubmissionNpoVerificationModal = ({ show, onHide, onClickRequest, title,
       </ModalSection>
       <ModalFooter>
         <Stack direction="row" justify="end" align="center">
-          <Button type="secondary" onClick={onHide}>
+          <Button type="secondary" onClick={hide}>
             Cancel
           </Button>
           <Button onClick={onClickSubmit} type="secondary">Request resubmission</Button>
