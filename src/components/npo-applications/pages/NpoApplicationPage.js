@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { InputField, Stack, Button, Textarea } from '@kiwicom/orbit-components/';
+import { InputField, Stack, Button, Textarea, Alert } from '@kiwicom/orbit-components/';
 import { getFormattedDateTime } from '../../../../utils/time/time';
 import styled from 'styled-components';
 import useUser from '../../session/modules/useUser';
@@ -16,7 +16,7 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
-const LeftSideButtons = ({ admin, npoApplicationId, status }) => {
+const LeftSideButtons = ({ admin, npoApplicationId, status, onError, removeError }) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [buttonText, setButtonText] = useState('');
   const [loading, setIsLoading] = useState(false);
@@ -58,8 +58,10 @@ const LeftSideButtons = ({ admin, npoApplicationId, status }) => {
   };
 
   const handleLockUnlockForReview = () => {
-    if (admin && admin.id && isMeHandlingApplication(admin)) {
+    const isReviewing = status === STATUS.REVIEWING;
+    if (admin && admin.id && isMeHandlingApplication(admin) && isReviewing) {
       // unlock
+      removeError();
       setIsLoading(true);
       api.npoVerifications
         .unlockForReview(npoApplicationId)
@@ -69,9 +71,11 @@ const LeftSideButtons = ({ admin, npoApplicationId, status }) => {
         .catch((error) => {
           setIsLoading(false);
           console.error(error.message);
+          onError(error.message);
         });
     } else {
       // lock
+      removeError();
       setIsLoading(true);
       api.npoVerifications
         .lockForReview(npoApplicationId)
@@ -81,6 +85,7 @@ const LeftSideButtons = ({ admin, npoApplicationId, status }) => {
         .catch((error) => {
           setIsLoading(false);
           console.error(error.message);
+          onError(error.message);
         });
     }
   };
@@ -94,12 +99,12 @@ const LeftSideButtons = ({ admin, npoApplicationId, status }) => {
   );
 };
 
-const RightSideButtons = ({ admin, npoApplicationId, status }) => {
+const RightSideButtons = ({ admin, npoApplicationId, status, onError, removeError }) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [showAcceptModal, setShowAcceptModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showResubmissionModal, setShowResubmissionModal] = useState(false);
-
+  const router = useRouter();
   const user = useUser();
 
   useEffect(() => {
@@ -139,14 +144,43 @@ const RightSideButtons = ({ admin, npoApplicationId, status }) => {
     setShowResubmissionModal(false);
   };
 
-  const onClickAccept = () => {};
+  const onClickAccept = () => {
+    removeError();
+    api.npoVerifications
+      .accept(npoApplicationId)
+      .then(() => {
+        router.reload();
+      })
+      .catch((error) => {
+        console.error(error.message);
+        onError(error.message);
+      });
+  };
 
   const onClickReject = (reason) => {
-    console.log(reason);
+    removeError();
+    api.npoVerifications
+      .reject(npoApplicationId, reason)
+      .then(() => {
+        router.reload();
+      })
+      .catch((error) => {
+        console.error(error.message);
+        onError(error.message);
+      });
   };
 
   const onClickResubmission = (reason) => {
-    console.log(reason);
+    removeError();
+    api.npoVerifications
+      .requestForResubmission(npoApplicationId, reason)
+      .then(() => {
+        router.reload();
+      })
+      .catch((error) => {
+        console.error(error.message);
+        onError(error.message);
+      });
   };
 
   return (
@@ -187,9 +221,31 @@ const RightSideButtons = ({ admin, npoApplicationId, status }) => {
 };
 
 const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
+  const [alertTitle, setAlertTitle] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertType, setAlertType] = useState('');
+  const [alertDescription, setAlertDescription] = useState('');
+
+  const displayAlert = (title, description, type) => {
+    setShowAlert(true);
+    setAlertTitle(title);
+    setAlertDescription(description);
+    setAlertType(type);
+  };
+
+  const onError = (errorMessage) => {
+    displayAlert('Error', errorMessage, 'critical');
+  };
+
   return (
     <Container>
       <Stack>
+        {showAlert ? (
+          <Alert icon title={alertTitle} type={alertType}>
+            {alertDescription}
+          </Alert>
+        ) : null}
+
         <Stack
           direction="column"
           desktop={{
@@ -206,11 +262,15 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
             admin={npoApplicationDetails.admin ? npoApplicationDetails.admin : null}
             npoApplicationId={npoApplicationId}
             status={npoApplicationDetails.status}
+            onError={onError}
+            removeError={() => setShowAlert(false)}
           />
           <RightSideButtons
             admin={npoApplicationDetails.admin ? npoApplicationDetails.admin : null}
             npoApplicationId={npoApplicationId}
             status={npoApplicationDetails.status}
+            onError={onError}
+            removeError={() => setShowAlert(false)}
           />
         </Stack>
         <BadgeStatus status={npoApplicationDetails.status} />
