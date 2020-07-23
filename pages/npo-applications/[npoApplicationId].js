@@ -3,6 +3,7 @@ import { isAuthenticated } from '../../utils/authentication/authentication';
 import api from '../../api';
 import SessionProvider from '../../src/components/session/modules/SessionProvider';
 import MaxWidthContainer from '../../src/components/containers/MaxWidthContainer';
+import NpoApplicationPage from '../../src/components/npo-applications/pages/NpoApplicationPage';
 
 import dynamic from 'next/dynamic';
 const TopNavigationBar = dynamic(() => import('../../src/components/navbar/modules/TopNavigationBar'), { ssr: false });
@@ -13,7 +14,6 @@ export async function getServerSideProps({ params, req, res, query }) {
     getNpoApplicationDetails(npoApplicationId),
     isAuthenticated(req, res, { Location: '/' }),
   ]);
-  console.log(npoApplicationDetails);
   return {
     props: {
       npoApplicationId,
@@ -34,7 +34,7 @@ const NpoApplication = ({ npoApplicationId, npoApplicationDetails, user }) => {
       <TopNavigationBar />
 
       <MaxWidthContainer>
-        {npoApplicationDetails.name}
+        <NpoApplicationPage npoApplicationDetails={npoApplicationDetails} npoApplicationId={npoApplicationId} />
       </MaxWidthContainer>
     </SessionProvider>
   );
