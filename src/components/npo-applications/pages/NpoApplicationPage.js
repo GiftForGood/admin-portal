@@ -7,6 +7,9 @@ import api from '../../../../api';
 import { useRouter } from 'next/router';
 import { STATUS } from '../../../../utils/constants/npoVerification';
 import BadgeStatus from '../modules/BadgeStatus';
+import AcceptNpoVerificationModal from '../../modal/AcceptNpoVerificationModal';
+import RejectNpoVerificationModal from '../../modal/RejectNpoVerificationModal';
+import ResubmissionNpoVerificationModal from '../../modal/ResubmissionNpoVerificationModal';
 
 const Container = styled.div`
   max-width: 1000px;
@@ -93,6 +96,10 @@ const LeftSideButtons = ({ admin, npoApplicationId, status }) => {
 
 const RightSideButtons = ({ admin, npoApplicationId, status }) => {
   const [isDisabled, setIsDisabled] = useState(true);
+  const [showAcceptModal, setShowAcceptModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showResubmissionModal, setShowResubmissionModal] = useState(false);
+
   const user = useUser();
 
   useEffect(() => {
@@ -120,15 +127,61 @@ const RightSideButtons = ({ admin, npoApplicationId, status }) => {
     }
   };
 
+  const onHideAcceptModal = () => {
+    setShowAcceptModal(false);
+  };
+
+  const onHideRejectModal = () => {
+    setShowRejectModal(false);
+  };
+
+  const onHideResubmissionModal = () => {
+    setShowResubmissionModal(false);
+  };
+
+  const onClickAccept = () => {};
+
+  const onClickReject = (reason) => {
+    console.log(reason);
+  };
+
+  const onClickResubmission = (reason) => {
+    console.log(reason);
+  };
+
   return (
     <Stack inline direction="row" spacing="condensed" justify="end">
-      <Button disabled={isDisabled} type="secondary">
+      <Button disabled={isDisabled} type="secondary" onClick={() => setShowResubmissionModal(true)}>
         Resubmission
       </Button>
-      <Button disabled={isDisabled} type="critical">
+      <Button disabled={isDisabled} type="critical" onClick={() => setShowRejectModal(true)}>
         Reject
       </Button>
-      <Button disabled={isDisabled}>Accept</Button>
+      <Button disabled={isDisabled} onClick={() => setShowAcceptModal(true)}>
+        Accept
+      </Button>
+
+      <AcceptNpoVerificationModal
+        show={showAcceptModal}
+        onHide={onHideAcceptModal}
+        onClickAccept={onClickAccept}
+        title="Accept"
+        description="Are you sure you want to accept this NPO?"
+      />
+      <RejectNpoVerificationModal
+        show={showRejectModal}
+        onHide={onHideRejectModal}
+        onClickReject={onClickReject}
+        title="Reject"
+        description="Reason for rejecting application:"
+      />
+      <ResubmissionNpoVerificationModal
+        show={showResubmissionModal}
+        onHide={onHideResubmissionModal}
+        onClickRequest={onClickResubmission}
+        title="Request Resubmission"
+        description="Reason for requesting resubmission:"
+      />
     </Stack>
   );
 };
