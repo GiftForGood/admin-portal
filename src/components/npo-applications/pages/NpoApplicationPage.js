@@ -119,11 +119,6 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
           <RightSideButtons />
         </Stack>
         <BadgeStatus status={npoApplicationDetails.status} />
-        <InputField
-          readOnly
-          label="Personnel In-charge"
-          value={npoApplicationDetails.admin ? npoApplicationDetails.admin.name : null}
-        />
 
         <InputField
           readOnly
