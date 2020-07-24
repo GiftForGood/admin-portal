@@ -1,1 +1,1 @@
-export const NPO_VERIFICATION_BATCH_SIZE = 20;
+export const NPO_VERIFICATION_BATCH_SIZE = 50;
