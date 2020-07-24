@@ -26,13 +26,13 @@ class NPOVerifications {
     lastQueriedDocument = null
   ) {
     if (!isValidStatusFilterType(statusFilterType)) {
-      return new NPOVerificationError(
+      throw new NPOVerificationError(
         'invalid-parameters',
         `"${statusFilterType}" is not a valid filter type. Only ${Object.values(STATUS_FILTER_TYPE)} are valid.`
       );
     }
     if (!isValidOrderBy(orderBy)) {
-      return new NPOVerificationError(
+      throw new NPOVerificationError(
         'invalid-parameters',
         `"${orderBy}" is not a valid order by type. Only ${Object.values(ORDER_BY)} are valid.`
       );
