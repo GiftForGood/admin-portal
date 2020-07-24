@@ -16,6 +16,10 @@ const Container = styled.div`
   margin: 0 auto;
 `;
 
+const CheckContainer = styled.div`
+  margin-top: 10px;
+`;
+
 const LeftSideButtons = ({ admin, npoApplicationId, status, onError, removeError }) => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [buttonText, setButtonText] = useState('');
@@ -302,11 +306,14 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
 
         <InputField readOnly label="Contact Number" value={npoApplicationDetails.contactNumber} />
 
-        <InputField
-          readOnly
-          label="UEN Registration Number"
-          value={npoApplicationDetails.organization.registrationNumber}
-        />
+        <Stack direction="column" desktop={{ direction: 'row', align: 'end' }}>
+          <InputField
+            readOnly
+            label="UEN Registration Number"
+            value={npoApplicationDetails.organization.registrationNumber}
+          />
+          <Button>Check</Button>
+        </Stack>
 
         <InputField
           readOnly

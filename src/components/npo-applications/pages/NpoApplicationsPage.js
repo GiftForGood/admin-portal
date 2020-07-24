@@ -6,7 +6,7 @@ import { getFormattedDateTime } from '../../../../utils/time/time';
 import { useRouter } from 'next/router';
 import BadgeStatus from '../modules/BadgeStatus';
 import Filter from '../modules/Filter';
-import { ORDER_BY } from '../../../../utils/constants/npoVerification'
+import { ORDER_BY } from '../../../../utils/constants/npoVerification';
 
 const NpoApplicationsPage = () => {
   const [filterStatus, setFilterStatus] = useState();
@@ -19,8 +19,13 @@ const NpoApplicationsPage = () => {
       if (applications.length > 0) {
         lastQueriedDocument = applications[applications.length - 1];
       }
-      
-      const appSnapshots = await api.npoVerifications.getAll(filterStatus, ORDER_BY.LAST_UPDATED_DATE, false, lastQueriedDocument);
+
+      const appSnapshots = await api.npoVerifications.getAll(
+        filterStatus,
+        ORDER_BY.LAST_UPDATED_DATE,
+        false,
+        lastQueriedDocument
+      );
       setApplications([...applications, ...appSnapshots]);
     } catch (error) {
       console.error(error);
@@ -41,7 +46,7 @@ const NpoApplicationsPage = () => {
 
   const onLoadMoreclicked = async () => {
     getAllApplications();
-  }
+  };
 
   return (
     <Stack>
@@ -97,7 +102,7 @@ const NpoApplicationsPage = () => {
               <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
                 <Stack direction="row">
                   <Button size="small" onClick={() => onReviewClicked(appSnapshot.id)}>
-                    Review
+                    View
                   </Button>
                 </Stack>
               </TableCell>
@@ -107,7 +112,9 @@ const NpoApplicationsPage = () => {
       </Table>
 
       <Stack justify="center">
-        <Button type="secondary" onClick={onLoadMoreclicked}>Load More</Button>
+        <Button type="secondary" onClick={onLoadMoreclicked}>
+          Load More
+        </Button>
       </Stack>
     </Stack>
   );
