@@ -54,7 +54,7 @@ const CreateAdminModal = ({ show, onHide, onClickCreate, title }) => {
       </ModalSection>
       <ModalFooter>
         <Stack direction="row" justify="end" align="center">
-          <Button type="secondary" onClick={onHide}>
+          <Button type="secondary" onClick={onHide} disabled={formik.isSubmitting}>
             Cancel
           </Button>
           <Button submit disabled={formik.isSubmitting} onClick={formik.handleSubmit}>
