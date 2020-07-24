@@ -1,8 +1,11 @@
 import { db } from '../utils/firebase';
 import { NPO_VERIFICATION_BATCH_SIZE } from '../utils/constants/batchSize';
+import { VERIFICATION_ACCEPTED_ID, VERIFICATION_REJECTED_ID, VERIFICATION_RESUBMISSION_ID } from '../utils/constants/emailTemplate';
+import { GIFTFORGOOD_URL } from '../utils/constants/siteUrl';
 import { STATUS_FILTER_TYPE, ORDER_BY, STATUS, ACTIONS } from '../utils/constants/npoVerification';
 import { isValidStatusFilterType, isValidOrderBy } from '../utils/constants/npoVerification';
 import { getCurrentAdmin } from './common/currentUser';
+import { cloudFunctionClient } from '../utils/axios';
 import NPOVerificationError from './error/npoVerificationError';
 
 const npoVerificationsCollection = db.collection('npoVerifications');
@@ -224,7 +227,11 @@ class NPOVerifications {
     ref.collection('actionsByAdmin').add(actionsInfo);
     await nposCollections.doc(id).update(npoInfo);
 
-    // TODO: Send email
+    const emailData = {
+      name: verification.name,
+      url: GIFTFORGOOD_URL + '/login'
+    };
+    await this._sendVerificationEmail(verification.userId, VERIFICATION_ACCEPTED_ID, emailData);
 
     return ref.get();
   }
@@ -272,7 +279,12 @@ class NPOVerifications {
     await ref.update(verificationInfo);
     ref.collection('actionsByAdmin').add(actionsInfo);
 
-    // TODO: Send email
+    const emailData = {
+      name: verification.name,
+      reason: reason,
+      url: GIFTFORGOOD_URL + '/login'
+    };
+    await this._sendVerificationEmail(verification.userId, VERIFICATION_REJECTED_ID, emailData);
 
     return ref.get();
   }
@@ -320,9 +332,32 @@ class NPOVerifications {
     await ref.update(verificationInfo);
     ref.collection('actionsByAdmin').add(actionsInfo);
 
-    // TODO: Send email
+    const emailData = {
+      name: verification.name,
+      reason: reason,
+      url: GIFTFORGOOD_URL + '/login'
+    };
+    await this._sendVerificationEmail(verification.userId, VERIFICATION_RESUBMISSION_ID, emailData);
 
     return ref.get();
+  }
+
+  async _sendVerificationEmail(npoId, templateId, emailData) {
+    const data = {
+      dynamicTemplateData: emailData,
+      templateId: templateId,
+      npoId: npoId,
+    }
+    
+    const res = await cloudFunctionClient.post('/sendEmailToNPO', data);
+    const resData = res.data;
+    
+    if (res.status != 200) {
+      throw new NPOVerificationError(resData.error.code, resData.error.message);
+    }
+    if (resData.error.code !== 'send-email-npo/success') {
+      throw new NPOVerificationError(resData.error.code, resData.error.message);
+    }
   }
 }
 
