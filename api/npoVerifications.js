@@ -229,7 +229,6 @@ class NPOVerifications {
 
     const emailData = {
       name: verification.name,
-      url: GIFTFORGOOD_URL + '/login'
     };
     await this._sendVerificationEmail(verification.userId, VERIFICATION_ACCEPTED_ID, emailData);
 
@@ -282,7 +281,6 @@ class NPOVerifications {
     const emailData = {
       name: verification.name,
       reason: reason,
-      url: GIFTFORGOOD_URL + '/login'
     };
     await this._sendVerificationEmail(verification.userId, VERIFICATION_REJECTED_ID, emailData);
 
@@ -335,7 +333,6 @@ class NPOVerifications {
     const emailData = {
       name: verification.name,
       reason: reason,
-      url: GIFTFORGOOD_URL + '/login'
     };
     await this._sendVerificationEmail(verification.userId, VERIFICATION_RESUBMISSION_ID, emailData);
 
