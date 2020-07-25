@@ -1,7 +1,6 @@
 let BASE_URL = '';
 let FIREBASE_EMAIL_ACTION_URL = '';
 const CLOUD_FUNCTIONS_URL = 'https://us-central1-giftforgood.cloudfunctions.net/';
-const GIFTFORGOOD_URL = 'https://giftforgood.io'
 
 if (process.env.NODE_ENV === 'development') {
   BASE_URL = 'http://localhost:3001';
@@ -11,4 +10,4 @@ if (process.env.NODE_ENV === 'development') {
   FIREBASE_EMAIL_ACTION_URL = 'https://admin-gfg.herokuapp.com/';
 }
 
-export { BASE_URL, FIREBASE_EMAIL_ACTION_URL, CLOUD_FUNCTIONS_URL, GIFTFORGOOD_URL };
+export { BASE_URL, FIREBASE_EMAIL_ACTION_URL, CLOUD_FUNCTIONS_URL };

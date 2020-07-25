@@ -1,6 +1,10 @@
 import { db } from '../utils/firebase';
 import { NPO_VERIFICATION_BATCH_SIZE } from '../utils/constants/batchSize';
-import { VERIFICATION_ACCEPTED_ID, VERIFICATION_REJECTED_ID, VERIFICATION_RESUBMISSION_ID } from '../utils/constants/emailTemplate';
+import {
+  VERIFICATION_ACCEPTED_ID,
+  VERIFICATION_REJECTED_ID,
+  VERIFICATION_RESUBMISSION_ID,
+} from '../utils/constants/emailTemplate';
 import { GIFTFORGOOD_URL } from '../utils/constants/siteUrl';
 import { STATUS_FILTER_TYPE, ORDER_BY, STATUS, ACTIONS } from '../utils/constants/npoVerification';
 import { isValidStatusFilterType, isValidOrderBy } from '../utils/constants/npoVerification';
@@ -344,11 +348,11 @@ class NPOVerifications {
       dynamicTemplateData: emailData,
       templateId: templateId,
       npoId: npoId,
-    }
-    
+    };
+
     const res = await cloudFunctionClient.post('/sendEmailToNPO', data);
     const resData = res.data;
-    
+
     if (res.status != 200) {
       throw new NPOVerificationError(resData.error.code, resData.error.message);
     }
