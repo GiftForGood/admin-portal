@@ -206,6 +206,9 @@ class NPOVerifications {
     if (verification.status !== STATUS.REVIEWING) {
       throw new NPOVerificationError('invalid-status', 'Only can accept verifications that are reviewing');
     }
+    if (admin.adminId !== verification.admin.id) {
+      throw new NPOVerificationError('invalid-admin', 'only the reviewing admin can accept the verification');
+    }
 
     const timeNow = Date.now();
     const verificationInfo = {
@@ -245,7 +248,7 @@ class NPOVerifications {
    * @param {string} reason The reason for rejecting the verification
    * @throws {NPOVerificationError}
    * @throws {FirebaseError}
-   * @return {object} A firebase document of the accepted verification
+   * @return {object} A firebase document of the rejected verification
    */
   async reject(id, reason) {
     let admin;
@@ -259,7 +262,10 @@ class NPOVerifications {
     const verification = snapshot.data();
 
     if (verification.status !== STATUS.REVIEWING) {
-      throw new NPOVerificationError('invalid-status', 'Only can accept verifications that are reviewing');
+      throw new NPOVerificationError('invalid-status', 'Only can reject verifications that are reviewing');
+    }
+    if (admin.adminId !== verification.admin.id) {
+      throw new NPOVerificationError('invalid-admin', 'only the reviewing admin can reject the verification');
     }
 
     const timeNow = Date.now();
@@ -294,7 +300,7 @@ class NPOVerifications {
   /**
    * Request a verification to be resubmitted
    * @param {string} id npo id
-   * @param {string} reason The reason for rejecting the verification
+   * @param {string} reason The additional items needed for the verification
    * @throws {NPOVerificationError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the verification to be resubmitted
@@ -311,7 +317,13 @@ class NPOVerifications {
     const verification = snapshot.data();
 
     if (verification.status !== STATUS.REVIEWING) {
-      throw new NPOVerificationError('invalid-status', 'Only can accept verifications that are reviewing');
+      throw new NPOVerificationError('invalid-status', 'Only can request for verifications that are reviewing');
+    }
+    if (admin.adminId !== verification.admin.id) {
+      throw new NPOVerificationError(
+        'invalid-admin',
+        'only the reviewing admin can request for resubmission on the verification'
+      );
     }
 
     const timeNow = Date.now();
