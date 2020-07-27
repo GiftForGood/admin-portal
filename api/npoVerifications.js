@@ -1,8 +1,15 @@
 import { db } from '../utils/firebase';
 import { NPO_VERIFICATION_BATCH_SIZE } from '../utils/constants/batchSize';
+import {
+  VERIFICATION_ACCEPTED_ID,
+  VERIFICATION_REJECTED_ID,
+  VERIFICATION_RESUBMISSION_ID,
+} from '../utils/constants/emailTemplate';
+import { GIFTFORGOOD_URL } from '../utils/constants/siteUrl';
 import { STATUS_FILTER_TYPE, ORDER_BY, STATUS, ACTIONS } from '../utils/constants/npoVerification';
 import { isValidStatusFilterType, isValidOrderBy } from '../utils/constants/npoVerification';
 import { getCurrentAdmin } from './common/currentUser';
+import { cloudFunctionClient } from '../utils/axios';
 import NPOVerificationError from './error/npoVerificationError';
 
 const npoVerificationsCollection = db.collection('npoVerifications');
@@ -199,6 +206,9 @@ class NPOVerifications {
     if (verification.status !== STATUS.REVIEWING) {
       throw new NPOVerificationError('invalid-status', 'Only can accept verifications that are reviewing');
     }
+    if (admin.adminId !== verification.admin.id) {
+      throw new NPOVerificationError('invalid-admin', 'only the reviewing admin can accept the verification');
+    }
 
     const timeNow = Date.now();
     const verificationInfo = {
@@ -224,7 +234,10 @@ class NPOVerifications {
     ref.collection('actionsByAdmin').add(actionsInfo);
     await nposCollections.doc(id).update(npoInfo);
 
-    // TODO: Send email
+    const emailData = {
+      name: verification.name,
+    };
+    await this._sendVerificationEmail(verification.userId, VERIFICATION_ACCEPTED_ID, emailData);
 
     return ref.get();
   }
@@ -235,7 +248,7 @@ class NPOVerifications {
    * @param {string} reason The reason for rejecting the verification
    * @throws {NPOVerificationError}
    * @throws {FirebaseError}
-   * @return {object} A firebase document of the accepted verification
+   * @return {object} A firebase document of the rejected verification
    */
   async reject(id, reason) {
     let admin;
@@ -249,7 +262,10 @@ class NPOVerifications {
     const verification = snapshot.data();
 
     if (verification.status !== STATUS.REVIEWING) {
-      throw new NPOVerificationError('invalid-status', 'Only can accept verifications that are reviewing');
+      throw new NPOVerificationError('invalid-status', 'Only can reject verifications that are reviewing');
+    }
+    if (admin.adminId !== verification.admin.id) {
+      throw new NPOVerificationError('invalid-admin', 'only the reviewing admin can reject the verification');
     }
 
     const timeNow = Date.now();
@@ -272,7 +288,11 @@ class NPOVerifications {
     await ref.update(verificationInfo);
     ref.collection('actionsByAdmin').add(actionsInfo);
 
-    // TODO: Send email
+    const emailData = {
+      name: verification.name,
+      reason: reason,
+    };
+    await this._sendVerificationEmail(verification.userId, VERIFICATION_REJECTED_ID, emailData);
 
     return ref.get();
   }
@@ -280,7 +300,7 @@ class NPOVerifications {
   /**
    * Request a verification to be resubmitted
    * @param {string} id npo id
-   * @param {string} reason The reason for rejecting the verification
+   * @param {string} reason The additional items needed for the verification
    * @throws {NPOVerificationError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the verification to be resubmitted
@@ -297,7 +317,13 @@ class NPOVerifications {
     const verification = snapshot.data();
 
     if (verification.status !== STATUS.REVIEWING) {
-      throw new NPOVerificationError('invalid-status', 'Only can accept verifications that are reviewing');
+      throw new NPOVerificationError('invalid-status', 'Only can request for verifications that are reviewing');
+    }
+    if (admin.adminId !== verification.admin.id) {
+      throw new NPOVerificationError(
+        'invalid-admin',
+        'only the reviewing admin can request for resubmission on the verification'
+      );
     }
 
     const timeNow = Date.now();
@@ -320,9 +346,31 @@ class NPOVerifications {
     await ref.update(verificationInfo);
     ref.collection('actionsByAdmin').add(actionsInfo);
 
-    // TODO: Send email
+    const emailData = {
+      name: verification.name,
+      reason: reason,
+    };
+    await this._sendVerificationEmail(verification.userId, VERIFICATION_RESUBMISSION_ID, emailData);
 
     return ref.get();
+  }
+
+  async _sendVerificationEmail(npoId, templateId, emailData) {
+    const data = {
+      dynamicTemplateData: emailData,
+      templateId: templateId,
+      npoId: npoId,
+    };
+
+    const res = await cloudFunctionClient.post('/sendEmailToNPO', data);
+    const resData = res.data;
+
+    if (res.status != 200) {
+      throw new NPOVerificationError(resData.error.code, resData.error.message);
+    }
+    if (resData.error.code !== 'send-email-npo/success') {
+      throw new NPOVerificationError(resData.error.code, resData.error.message);
+    }
   }
 }
 
