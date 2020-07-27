@@ -32,8 +32,17 @@ const NpoApplicationsPage = () => {
     }
   };
 
+  const getAllApplicationsForStatus = async () => {
+    try {
+      const appSnapshots = await api.npoVerifications.getAll(filterStatus);
+      setApplications(appSnapshots);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    getAllApplications();
+    getAllApplicationsForStatus();
   }, [filterStatus]);
 
   const onSelectedFilter = (status) => {
