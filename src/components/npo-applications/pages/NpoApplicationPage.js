@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { InputField, Stack, Button, Textarea, Alert } from '@kiwicom/orbit-components/';
+import { InputField, Stack, Button, Textarea, Alert, Card, CardSection } from '@kiwicom/orbit-components/';
 import { getFormattedDateTime } from '../../../../utils/time/time';
 import styled from 'styled-components';
 import useUser from '../../session/modules/useUser';
@@ -14,10 +14,6 @@ import ResubmissionNpoVerificationModal from '../../modal/ResubmissionNpoVerific
 const Container = styled.div`
   max-width: 1000px;
   margin: 0 auto;
-`;
-
-const CheckContainer = styled.div`
-  margin-top: 10px;
 `;
 
 const LeftSideButtons = ({ admin, npoApplicationId, status, onError, removeError }) => {
@@ -230,6 +226,9 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
   const [alertType, setAlertType] = useState('');
   const [alertDescription, setAlertDescription] = useState('');
 
+  const [showUenCheck, setShowUenCheck] = useState(false);
+  const [uenDetails, setUenDetails] = useState(null);
+
   const displayAlert = (title, description, type) => {
     setShowAlert(true);
     setAlertTitle(title);
@@ -239,6 +238,46 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
 
   const onError = (errorMessage) => {
     displayAlert('Error', errorMessage, 'critical');
+  };
+
+  const checkUen = async () => {
+    try {
+      setShowUenCheck(false);
+      const orgDetails = await api.npoOrganizations.getByUEN(npoApplicationDetails.organization.registrationNumber);
+      setShowUenCheck(true);
+      setUenDetails(orgDetails.data());
+    } catch (error) {
+      console.error(error.message);
+      setShowUenCheck(true);
+    }
+  };
+
+  const UenCard = ({ success, organizationDetails }) => {
+    return (
+      <Card title="UEN Checker">
+        <CardSection>
+          {success ? (
+            <Alert icon title="Match found" type="success" spaceAfter="large" />
+          ) : (
+            <Alert icon title="No match found" type="critical" spaceAfter="large" />
+          )}
+
+          {organizationDetails ? (
+            <Stack>
+              <InputField readOnly label="UEN Registration Number" value={organizationDetails.uen} />
+
+              <InputField readOnly label="Organization Name" value={organizationDetails.name} />
+
+              <InputField readOnly label="Address" value={organizationDetails.address} />
+
+              <InputField readOnly label="Sector" value={organizationDetails.sector} />
+
+              <InputField readOnly label="Classification" value={organizationDetails.classification} />
+            </Stack>
+          ) : null}
+        </CardSection>
+      </Card>
+    );
   };
 
   return (
@@ -312,8 +351,10 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
             label="UEN Registration Number"
             value={npoApplicationDetails.organization.registrationNumber}
           />
-          <Button>Check</Button>
+          <Button onClick={checkUen}>Check</Button>
         </Stack>
+
+        {showUenCheck ? <UenCard success={uenDetails ? true : false} organizationDetails={uenDetails} /> : null}
 
         <InputField
           readOnly
