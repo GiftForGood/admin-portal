@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { InputField, Stack, Button, Textarea, Alert, Card, CardSection, Text } from '@kiwicom/orbit-components/';
+import { InputField, Stack, Button, Textarea, Alert, Card, CardSection } from '@kiwicom/orbit-components/';
 import { getFormattedDateTime } from '../../../../utils/time/time';
 import styled from 'styled-components';
 import useUser from '../../session/modules/useUser';
@@ -257,9 +257,9 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
       <Card title="UEN Checker">
         <CardSection>
           {success ? (
-            <Alert icon title="Match found" type="success" spaceAfter="large"/>
+            <Alert icon title="Match found" type="success" spaceAfter="large" />
           ) : (
-            <Alert icon title="No match found" type="critical" spaceAfter="large"/>
+            <Alert icon title="No match found" type="critical" spaceAfter="large" />
           )}
 
           {organizationDetails ? (
