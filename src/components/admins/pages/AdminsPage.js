@@ -3,7 +3,7 @@ import { Stack, Button } from '@kiwicom/orbit-components/';
 import Table, { TableHead, TableBody, TableRow, TableCell } from '@kiwicom/orbit-components/lib/Table';
 import api from '../../../../api';
 import { getFormattedDateTime } from '../../../../utils/time/time';
-import CreateAdminModal from '../../modal/CreateAdminModal';
+import CreateAdminModal from '../../modal/createAdmin/CreateAdminModal';
 
 const AdminsPage = () => {
   const [admins, setAdmins] = useState([]);
@@ -13,16 +13,8 @@ const AdminsPage = () => {
     setShowCreateModal(false);
   };
 
-  const onClickCreate = (email, name) => {
-    api.admins
-      .createFromExistingAccount(email, name)
-      .then(() => {
-        setShowCreateModal(false);
-        getAllAdmins();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const rerenderTable = () => {
+    getAllAdmins();
   };
 
   const getAllAdmins = async () => {
@@ -44,7 +36,7 @@ const AdminsPage = () => {
         show={showCreateModal}
         onHide={onHideCreateModal}
         title="Create Admin"
-        onClickCreate={onClickCreate}
+        rerenderTable={rerenderTable}
       />
       <Button onClick={() => setShowCreateModal(true)}>Create new Admin</Button>
       <Table striped type="primary">
