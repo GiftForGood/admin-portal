@@ -5,7 +5,6 @@ import {
   VERIFICATION_REJECTED_ID,
   VERIFICATION_RESUBMISSION_ID,
 } from '../utils/constants/emailTemplate';
-import { GIFTFORGOOD_URL } from '../utils/constants/siteUrl';
 import { STATUS_FILTER_TYPE, ORDER_BY, STATUS, ACTIONS } from '../utils/constants/npoVerification';
 import { isValidStatusFilterType, isValidOrderBy } from '../utils/constants/npoVerification';
 import { getCurrentAdmin } from './common/currentUser';
@@ -163,9 +162,22 @@ class NPOVerifications {
       throw new NPOVerificationError('invalid-status', 'Only can unlock verifications that are reviewing');
     }
 
+    let status = STATUS.PENDING;
+    let actions = await this.getAllAdminActions(id);
+    actions.forEach((action) => {
+      const actionType = action.data().type;
+      if (actionType === ACTIONS.ACCEPT || actionType === ACTIONS.REJECT) {
+        return;
+      }
+      if (actionType === ACTIONS.RESUBMIT) {
+        status = STATUS.RESUBMISSION;
+        return;
+      }
+    });
+
     const timeNow = Date.now();
     const verificationInfo = {
-      status: STATUS.PENDING,
+      status: status,
       admin: {
         id: '',
         name: '',
