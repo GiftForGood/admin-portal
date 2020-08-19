@@ -244,6 +244,11 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
     try {
       setShowUenCheck(false);
       const orgDetails = await api.npoOrganizations.getByUEN(npoApplicationDetails.organization.registrationNumber);
+      if (orgDetails === null) {
+        throw new Error(
+          `organization with UEN of ${npoApplicationDetails.organization.registrationNumber} does not exist`
+        );
+      }
       setShowUenCheck(true);
       setUenDetails(orgDetails.data());
     } catch (error) {
