@@ -10,31 +10,22 @@ const TopNavigationBar = dynamic(() => import('../../src/components/navbar/modul
 
 export async function getServerSideProps({ params, req, res, query }) {
   const npoApplicationId = params.npoApplicationId;
-  const [npoApplicationDetails, data] = await Promise.all([
-    getNpoApplicationDetails(npoApplicationId),
-    isAuthenticated(req, res, { Location: '/' }),
-  ]);
+  const data = await isAuthenticated(req, res, { Location: '/' });
   return {
     props: {
       npoApplicationId,
-      npoApplicationDetails,
       user: data.user || null,
     },
   };
 }
 
-const getNpoApplicationDetails = async (npoApplicationId) => {
-  const appSnapshot = await api.npoVerifications.get(npoApplicationId).catch((err) => console.error(err));
-  return appSnapshot.data() ? appSnapshot.data() : {};
-};
-
-const NpoApplication = ({ npoApplicationId, npoApplicationDetails, user }) => {
+const NpoApplication = ({ npoApplicationId, user }) => {
   return (
     <SessionProvider user={user}>
       <TopNavigationBar />
 
       <MaxWidthContainer>
-        <NpoApplicationPage npoApplicationDetails={npoApplicationDetails} npoApplicationId={npoApplicationId} />
+        <NpoApplicationPage npoApplicationId={npoApplicationId} />
       </MaxWidthContainer>
     </SessionProvider>
   );

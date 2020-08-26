@@ -220,7 +220,7 @@ const RightSideButtons = ({ admin, npoApplicationId, status, onError, removeErro
   );
 };
 
-const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
+const NpoApplicationPage = ({ npoApplicationId }) => {
   const [alertTitle, setAlertTitle] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('');
@@ -229,12 +229,25 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
   const [showUenCheck, setShowUenCheck] = useState(false);
   const [uenDetails, setUenDetails] = useState(null);
 
+  const [npoApplicationDetails, setNpoApplicationDetails] = useState(null);
+
   const displayAlert = (title, description, type) => {
     setShowAlert(true);
     setAlertTitle(title);
     setAlertDescription(description);
     setAlertType(type);
   };
+
+  const getNpoApplicationDetails = async (npoApplicationId) => {
+    const appSnapshot = await api.npoVerifications.get(npoApplicationId).catch((err) => console.error(err));
+    return appSnapshot.data() ? appSnapshot.data() : {};
+  };
+
+  useEffect(() => {
+    getNpoApplicationDetails(npoApplicationId).then((npoApplication) => {
+      setNpoApplicationDetails(npoApplication);
+    });
+  }, []);
 
   const onError = (errorMessage) => {
     displayAlert('Error', errorMessage, 'critical');
@@ -284,6 +297,10 @@ const NpoApplicationPage = ({ npoApplicationDetails, npoApplicationId }) => {
       </Card>
     );
   };
+
+  if (npoApplicationDetails === null) {
+    return <div></div>;
+  }
 
   return (
     <Container>
