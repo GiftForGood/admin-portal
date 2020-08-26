@@ -38,7 +38,7 @@ const AdminsPage = () => {
         title="Create Admin"
         rerenderTable={rerenderTable}
       />
-      <Button onClick={() => setShowCreateModal(true)}>Create new Admin</Button>
+      <Button onClick={() => setShowCreateModal(true)}>Create Admin</Button>
       <Table striped type="primary">
         <TableHead>
           <TableRow>

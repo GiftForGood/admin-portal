@@ -125,6 +125,12 @@ const TopNavigationBar = () => {
               </ButtonLink>
             </Link>
 
+            <Link href="/npo-organizations">
+              <ButtonLink transparent type="secondary" href={'/npo-organizations'}>
+                NPO Organizations
+              </ButtonLink>
+            </Link>
+
             <Link href="/npos">
               <ButtonLink transparent type="secondary" href={'/npos'}>
                 NPOs

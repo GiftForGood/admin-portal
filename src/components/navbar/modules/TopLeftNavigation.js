@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, ButtonLink } from '@kiwicom/orbit-components/';
+import { Stack, ButtonLink, Popover } from '@kiwicom/orbit-components/';
 import { MenuHamburger } from '@kiwicom/orbit-components/lib/icons';
 import useMediaQuery from '@kiwicom/orbit-components/lib/hooks/useMediaQuery';
 import LogoButton from '../../buttons/LogoButton';
@@ -27,21 +27,9 @@ const TopLeftNavigation = ({ onHamburgerClick }) => {
             </ButtonLink>
           </Link>
 
-          <Link href="/npos">
-            <ButtonLink transparent type="secondary" href={'/npos'}>
-              NPOs
-            </ButtonLink>
-          </Link>
-
-          <Link href="/donors">
-            <ButtonLink transparent type="secondary" href={'/donors'}>
-              Donors
-            </ButtonLink>
-          </Link>
-
-          <Link href="/admins">
-            <ButtonLink transparent type="secondary" href={'/admins'}>
-              Admins
+          <Link href="/npo-organizations">
+            <ButtonLink transparent type="secondary" href={'/npo-organizations'}>
+              NPO Organizations
             </ButtonLink>
           </Link>
 
@@ -56,6 +44,27 @@ const TopLeftNavigation = ({ onHamburgerClick }) => {
               Banner
             </ButtonLink>
           </Link>
+
+          <Popover
+            content={
+              <Stack direction="column" spacing="extraTight">
+                <ButtonLink transparent type="secondary" href="/admins">
+                  Admins
+                </ButtonLink>
+                <ButtonLink transparent type="secondary" href="/donors">
+                  Donors
+                </ButtonLink>
+                <ButtonLink transparent type="secondary" href="/npos">
+                  NPOs
+                </ButtonLink>
+              </Stack>
+            }
+            preferredAlign="end"
+          >
+            <ButtonLink transparent type="secondary">
+              Users
+            </ButtonLink>
+          </Popover>
         </>
       ) : (
         <ButtonLink iconLeft={<MenuHamburger />} transparent type="secondary" onClick={onHamburgerClick} />
