@@ -246,7 +246,7 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
 
   useEffect(() => {
     getNpoApplicationDetails(npoApplicationId).then((npoApplication) => {
-      deserializeFirestoreTimestampToUnixTimestamp(npoApplication)
+      deserializeFirestoreTimestampToUnixTimestamp(npoApplication);
       setNpoApplicationDetails(npoApplication);
     });
   }, []);
