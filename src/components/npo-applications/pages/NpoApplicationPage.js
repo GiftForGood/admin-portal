@@ -10,6 +10,7 @@ import BadgeStatus from '../modules/BadgeStatus';
 import AcceptNpoVerificationModal from '../../modal/AcceptNpoVerificationModal';
 import RejectNpoVerificationModal from '../../modal/RejectNpoVerificationModal';
 import ResubmissionNpoVerificationModal from '../../modal/ResubmissionNpoVerificationModal';
+import { deserializeFirestoreTimestampToUnixTimestamp } from '../../../../utils/firebase/deserializer';
 
 const Container = styled.div`
   max-width: 1000px;
@@ -245,6 +246,7 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
 
   useEffect(() => {
     getNpoApplicationDetails(npoApplicationId).then((npoApplication) => {
+      deserializeFirestoreTimestampToUnixTimestamp(npoApplication);
       setNpoApplicationDetails(npoApplication);
     });
   }, []);
