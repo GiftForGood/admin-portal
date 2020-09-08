@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 import BadgeStatus from '../modules/BadgeStatus';
 import Filter from '../modules/Filter';
 import { ORDER_BY } from '../../../../utils/constants/npoVerification';
+import { deserializeFirestoreTimestampToUnixTimestamp } from '../../../../utils/firebase/deserializer';
 
 const NpoApplicationsPage = () => {
   const [filterStatus, setFilterStatus] = useState();
@@ -88,35 +89,40 @@ const NpoApplicationsPage = () => {
         </TableHead>
 
         <TableBody>
-          {applications.map((appSnapshot, index) => (
-            <TableRow>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {index + 1}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().organization.name}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().name}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {getFormattedDateTime(appSnapshot.data().appliedDateTime)}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                <BadgeStatus status={appSnapshot.data().status} />
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().admin ? appSnapshot.data().admin.name : null}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                <Stack direction="row">
-                  <Button size="small" onClick={() => onReviewClicked(appSnapshot.id)}>
-                    View
-                  </Button>
-                </Stack>
-              </TableCell>
-            </TableRow>
-          ))}
+          {applications.map((appSnapshot, index) => {
+            const data = appSnapshot.data();
+            deserializeFirestoreTimestampToUnixTimestamp(data);
+            const { organization, name, appliedDateTime, status, admin } = data;
+            return (
+              <TableRow>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {index + 1}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {organization.name}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {name}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {getFormattedDateTime(appliedDateTime)}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  <BadgeStatus status={status} />
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {admin ? admin.name : null}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  <Stack direction="row">
+                    <Button size="small" onClick={() => onReviewClicked(appSnapshot.id)}>
+                      View
+                    </Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
 
