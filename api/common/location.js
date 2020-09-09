@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GEO_LOCATION_URL } from '../../utils/constants/thirdPartyAPIUrl';
+import { GEO_LOCATION_URL } from '@constants/thirdPartyAPIUrl';
 
 export const getLocations = async (locations) => {
   let locationDetails = [];

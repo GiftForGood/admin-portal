@@ -1,13 +1,13 @@
-import { db } from '../utils/firebase';
-import { NPO_ORGANIZATION_BATCH_SIZE } from '../utils/constants/batchSize';
-import { TYPE_FILTER_TYPE, SECTOR_FILTER_TYPE, ORDER_BY, TYPE, SECTOR } from '../utils/constants/npoOrganization';
+import { db } from '@utils/firebase';
+import { NPO_ORGANIZATION_BATCH_SIZE } from '@constants/batchSize';
+import { TYPE_FILTER_TYPE, SECTOR_FILTER_TYPE, ORDER_BY, TYPE, SECTOR } from '@constants/npoOrganization';
 import {
   isValidTypeFilterType,
   isValidSectorFilterType,
   isValidOrderBy,
   isValidType,
   isValidSector,
-} from '../utils/constants/npoOrganization';
+} from '@constants/npoOrganization';
 import { getLocations } from './common/location';
 import NPOOrganizationError from './error/npoOrganizationError';
 

@@ -4,8 +4,8 @@ import TopLeftNavigation from './TopLeftNavigation';
 import TopRightNavigation from './TopRightNavigation';
 import styled, { css } from 'styled-components';
 import media from '@kiwicom/orbit-components/lib/utils/mediaQuery';
-import { EMAIL_BAR_HEIGHT, NAVBAR_HEIGHT } from '../../../../utils/constants/navbar';
-import useUser from '../../session/modules/useUser';
+import { EMAIL_BAR_HEIGHT, NAVBAR_HEIGHT } from '@constants/navbar';
+import useUser from '@components/session/modules/useUser';
 import transition from '@kiwicom/orbit-components/lib/utils/transition';
 import Link from 'next/link';
 

@@ -1,4 +1,4 @@
-import { db, firebaseAuth } from '../../utils/firebase';
+import { db, firebaseAuth } from '@utils/firebase';
 import CurrentUserError from '../error/currentUserError';
 
 export const getCurrentAdmin = async () => {

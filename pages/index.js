@@ -1,8 +1,8 @@
 import React from 'react';
 import media from '@kiwicom/orbit-components/lib/utils/mediaQuery';
 import styled, { css } from 'styled-components';
-import LoginPage from '../src/components/login/pages/LoginPage';
-import { isAuthenticated } from '../utils/authentication/authentication';
+import LoginPage from '@components/login/pages/LoginPage';
+import { isAuthenticated } from '@utils/authentication/authentication';
 
 const Wrapper = styled.div`
   display: flex;

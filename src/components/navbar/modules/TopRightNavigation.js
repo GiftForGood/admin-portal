@@ -1,10 +1,10 @@
 import React from 'react';
 import { Stack, ButtonLink, Popover } from '@kiwicom/orbit-components/';
-import useUser from '../../session/modules/useUser';
+import useUser from '@components/session/modules/useUser';
 import { AccountCircle } from '@kiwicom/orbit-components/lib/icons';
 import { useRouter } from 'next/router';
-import api from '../../../../api';
-import { client } from '../../../../utils/axios';
+import api from '@api';
+import { client } from '@utils/axios';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { logout } from '../../session/actions';

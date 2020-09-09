@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Button } from '@kiwicom/orbit-components/';
 import Table, { TableHead, TableBody, TableRow, TableCell } from '@kiwicom/orbit-components/lib/Table';
-import api from '../../../../api';
-import { getFormattedDateTime } from '../../../../utils/time/time';
+import api from '@api';
+import { getFormattedDateTime } from '@utils/time/time';
 import { useRouter } from 'next/router';
 import BadgeStatus from '../modules/BadgeStatus';
 import Filter from '../modules/Filter';
-import { ORDER_BY } from '../../../../utils/constants/npoVerification';
-import { deserializeFirestoreTimestampToUnixTimestamp } from '../../../../utils/firebase/deserializer';
+import { ORDER_BY } from '@constants/npoVerification';
+import { deserializeFirestoreTimestampToUnixTimestamp } from '@utils/firebase/deserializer';
 
 const NpoApplicationsPage = () => {
   const [filterStatus, setFilterStatus] = useState();

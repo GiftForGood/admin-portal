@@ -3,8 +3,8 @@ import { Text, InputField, Stack, Heading, Button, Alert } from '@kiwicom/orbit-
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-import api from '../../../../api';
-import useLocalStorage from '../../../../utils/hooks/useLocalStorage';
+import api from '@api';
+import useLocalStorage from '@utils/hooks/useLocalStorage';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);

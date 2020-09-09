@@ -1,4 +1,4 @@
-import useUser from '../../../components/session/modules/useUser';
+import useUser from '@components/session/modules/useUser';
 
 const Verified = (props) => {
   const user = useUser();
