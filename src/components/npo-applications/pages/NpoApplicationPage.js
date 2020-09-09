@@ -321,7 +321,6 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
     try {
       setShowEmailCheck(false);
       const emailDetails = await api.npoVerifications.getEmailVerified(npoApplicationId);
-      console.log(emailDetails);
       setShowEmailCheck(true);
       setEmailDetails(emailDetails);
     } catch (error) {
