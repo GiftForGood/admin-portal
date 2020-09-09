@@ -414,12 +414,6 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
         </Stack>
 
         {showUenCheck ? <UenCard success={uenDetails ? true : false} organizationDetails={uenDetails} /> : null}
-
-        <InputField
-          readOnly
-          label="Date of registration for Charity"
-          value={getFormattedDateTime(npoApplicationDetails.organization.dateOfRegistration)}
-        />
       </Stack>
     </Container>
   );
