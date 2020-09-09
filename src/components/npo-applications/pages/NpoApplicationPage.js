@@ -221,6 +221,48 @@ const RightSideButtons = ({ admin, npoApplicationId, status, onError, removeErro
   );
 };
 
+const UenCard = ({ success, organizationDetails }) => {
+  return (
+    <Card title="UEN Checker">
+      <CardSection>
+        {success ? (
+          <Alert icon title="Match found" type="success" spaceAfter="large" />
+        ) : (
+          <Alert icon title="No match found" type="critical" spaceAfter="large" />
+        )}
+
+        {organizationDetails ? (
+          <Stack>
+            <InputField readOnly label="UEN Registration Number" value={organizationDetails.uen} />
+
+            <InputField readOnly label="Organization Name" value={organizationDetails.name} />
+
+            <InputField readOnly label="Address" value={organizationDetails.address} />
+
+            <InputField readOnly label="Sector" value={organizationDetails.sector} />
+
+            <InputField readOnly label="Classification" value={organizationDetails.classification} />
+          </Stack>
+        ) : null}
+      </CardSection>
+    </Card>
+  );
+};
+
+const EmailCard = ({ emailVerified = false }) => {
+  return (
+    <Card title="Email Checker">
+      <CardSection>
+        {emailVerified ? (
+          <Alert icon title={'Email has been verified by user'} type="success" spaceAfter="large" />
+        ) : (
+          <Alert icon title="Email has not been verified by user yet" type="critical" spaceAfter="large" />
+        )}
+      </CardSection>
+    </Card>
+  );
+};
+
 const NpoApplicationPage = ({ npoApplicationId }) => {
   const [alertTitle, setAlertTitle] = useState('');
   const [showAlert, setShowAlert] = useState(false);
@@ -229,6 +271,9 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
 
   const [showUenCheck, setShowUenCheck] = useState(false);
   const [uenDetails, setUenDetails] = useState(null);
+
+  const [showEmailCheck, setShowEmailCheck] = useState(false);
+  const [emailDetails, setEmailDetails] = useState(null);
 
   const [npoApplicationDetails, setNpoApplicationDetails] = useState(null);
 
@@ -272,32 +317,16 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
     }
   };
 
-  const UenCard = ({ success, organizationDetails }) => {
-    return (
-      <Card title="UEN Checker">
-        <CardSection>
-          {success ? (
-            <Alert icon title="Match found" type="success" spaceAfter="large" />
-          ) : (
-            <Alert icon title="No match found" type="critical" spaceAfter="large" />
-          )}
-
-          {organizationDetails ? (
-            <Stack>
-              <InputField readOnly label="UEN Registration Number" value={organizationDetails.uen} />
-
-              <InputField readOnly label="Organization Name" value={organizationDetails.name} />
-
-              <InputField readOnly label="Address" value={organizationDetails.address} />
-
-              <InputField readOnly label="Sector" value={organizationDetails.sector} />
-
-              <InputField readOnly label="Classification" value={organizationDetails.classification} />
-            </Stack>
-          ) : null}
-        </CardSection>
-      </Card>
-    );
+  const checkEmail = async () => {
+    try {
+      setShowEmailCheck(false);
+      const emailDetails = await api.npoVerifications.getEmailVerified(npoApplicationId);
+      setShowEmailCheck(true);
+      setEmailDetails(emailDetails);
+    } catch (error) {
+      console.error(error.message);
+      setShowEmailCheck(true);
+    }
   };
 
   if (npoApplicationDetails === null) {
@@ -357,7 +386,12 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
           rows={5}
         />
 
-        <InputField readOnly label="Email" value={npoApplicationDetails.email} />
+        <Stack direction="column" desktop={{ direction: 'row', align: 'end' }}>
+          <InputField readOnly label="Email" value={npoApplicationDetails.email} />
+          <Button onClick={checkEmail}>Check</Button>
+        </Stack>
+
+        {showEmailCheck ? <EmailCard emailVerified={emailDetails ? emailDetails.emailVerified : false} /> : null}
 
         <InputField
           readOnly
@@ -379,12 +413,6 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
         </Stack>
 
         {showUenCheck ? <UenCard success={uenDetails ? true : false} organizationDetails={uenDetails} /> : null}
-
-        <InputField
-          readOnly
-          label="Date of registration for Charity"
-          value={getFormattedDateTime(npoApplicationDetails.organization.dateOfRegistration)}
-        />
       </Stack>
     </Container>
   );

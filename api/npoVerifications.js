@@ -1,4 +1,4 @@
-import { db } from '../utils/firebase';
+import { db, firebaseAuth } from '../utils/firebase';
 import { NPO_VERIFICATION_BATCH_SIZE } from '../utils/constants/batchSize';
 import {
   VERIFICATION_ACCEPTED_ID,
@@ -70,6 +70,33 @@ class NPOVerifications {
    */
   async get(id) {
     return npoVerificationsCollection.doc(id).get();
+  }
+
+  /**
+   * Get a npo email verified field
+   * @param {string} id npo id
+   */
+  async getEmailVerified(id) {
+    const idToken = await firebaseAuth.currentUser.getIdToken();
+    const data = {
+      npoId: id,
+      adminToken: idToken,
+    };
+
+    const res = await cloudFunctionClient.post('/getNPOEmailVerifiedField', data);
+    const resData = res.data;
+
+    if (res.status != 200) {
+      throw new NPOVerificationError(resData.error.code, resData.error.message);
+    }
+    if (resData.error.code !== 'get-npo-email-verified/success') {
+      throw new NPOVerificationError(resData.error.code, resData.error.message);
+    }
+
+    const npoEmailVerifiedData = {
+      emailVerified: resData.data.emailVerified,
+    };
+    return npoEmailVerifiedData;
   }
 
   /**
