@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { STATUS_FILTER_TYPE } from '../../../../utils/constants/npoVerification';
+import { STATUS_FILTER_TYPE } from '@constants/npoVerification';
 import { Popover, Button, ListChoice } from '@kiwicom/orbit-components/';
 import { ChevronDown } from '@kiwicom/orbit-components/lib/icons';
 

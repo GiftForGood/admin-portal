@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { InputField, Stack, Button, Textarea, Alert, Card, CardSection } from '@kiwicom/orbit-components/';
-import { getFormattedDateTime } from '../../../../utils/time/time';
+import { getFormattedDateTime } from '@utils/time/time';
 import styled from 'styled-components';
-import useUser from '../../session/modules/useUser';
-import api from '../../../../api';
+import useUser from '@components/session/modules/useUser';
+import api from '@api';
 import { useRouter } from 'next/router';
-import { STATUS } from '../../../../utils/constants/npoVerification';
+import { STATUS } from '@constants/npoVerification';
 import BadgeStatus from '../modules/BadgeStatus';
-import AcceptNpoVerificationModal from '../../modal/AcceptNpoVerificationModal';
-import RejectNpoVerificationModal from '../../modal/RejectNpoVerificationModal';
-import ResubmissionNpoVerificationModal from '../../modal/ResubmissionNpoVerificationModal';
-import { deserializeFirestoreTimestampToUnixTimestamp } from '../../../../utils/firebase/deserializer';
+import AcceptNpoVerificationModal from '@components/modal/AcceptNpoVerificationModal';
+import RejectNpoVerificationModal from '@components/modal/RejectNpoVerificationModal';
+import ResubmissionNpoVerificationModal from '@components/modal/ResubmissionNpoVerificationModal';
+import { deserializeFirestoreTimestampToUnixTimestamp } from '@utils/firebase/deserializer';
 
 const Container = styled.div`
   max-width: 1000px;

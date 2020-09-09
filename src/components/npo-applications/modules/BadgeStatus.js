@@ -1,5 +1,5 @@
 import React from 'react';
-import { STATUS } from '../../../../utils/constants/npoVerification';
+import { STATUS } from '@constants/npoVerification';
 import { Badge } from '@kiwicom/orbit-components/';
 
 const BadgeStatus = ({ status }) => {

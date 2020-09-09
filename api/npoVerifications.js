@@ -1,14 +1,14 @@
-import { db, firebaseAuth } from '../utils/firebase';
-import { NPO_VERIFICATION_BATCH_SIZE } from '../utils/constants/batchSize';
+import { db, firebaseAuth } from '@utils/firebase';
+import { NPO_VERIFICATION_BATCH_SIZE } from '@constants/batchSize';
 import {
   VERIFICATION_ACCEPTED_ID,
   VERIFICATION_REJECTED_ID,
   VERIFICATION_RESUBMISSION_ID,
-} from '../utils/constants/emailTemplate';
-import { STATUS_FILTER_TYPE, ORDER_BY, STATUS, ACTIONS } from '../utils/constants/npoVerification';
-import { isValidStatusFilterType, isValidOrderBy } from '../utils/constants/npoVerification';
+} from '@constants/emailTemplate';
+import { STATUS_FILTER_TYPE, ORDER_BY, STATUS, ACTIONS } from '@constants/npoVerification';
+import { isValidStatusFilterType, isValidOrderBy } from '@constants/npoVerification';
 import { getCurrentAdmin } from './common/currentUser';
-import { cloudFunctionClient } from '../utils/axios';
+import { cloudFunctionClient } from '@utils/axios';
 import NPOVerificationError from './error/npoVerificationError';
 
 const npoVerificationsCollection = db.collection('npoVerifications');

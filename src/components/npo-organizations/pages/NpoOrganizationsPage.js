@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Button } from '@kiwicom/orbit-components/';
 import Table, { TableHead, TableBody, TableRow, TableCell } from '@kiwicom/orbit-components/lib/Table';
-import api from '../../../../api';
-import Filter from '../modules/Filter';
-import { ORDER_BY } from '../../../../utils/constants/npoOrganization';
-import CreateNpoOrganizationModal from '../../modal/CreateNpoOrganizationModal';
+import api from '@api';
+import Filter from '@components/modules/Filter';
+import { ORDER_BY } from '@constants/npoOrganization';
+import CreateNpoOrganizationModal from '@components/modal/CreateNpoOrganizationModal';
 import { ToastContainer, toast } from 'react-toastify';
 
 const NpoOrganizationsPage = () => {

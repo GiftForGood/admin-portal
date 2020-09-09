@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { colors } from '../../../../../utils/constants/colors';
+import { colors } from '@constants/colors';
 import { Stack, TextLink, Separator } from '@kiwicom/orbit-components/lib';
 
 const unselectedTab = styled.a`

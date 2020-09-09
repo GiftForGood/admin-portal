@@ -1,7 +1,7 @@
-import { db, firebaseAuth } from '../utils/firebase';
-import { ORDER_BY } from '../utils/constants/admin';
-import { isValidOrderBy } from '../utils/constants/admin';
-import { cloudFunctionClient } from '../utils/axios';
+import { db, firebaseAuth } from '@utils/firebase';
+import { ORDER_BY } from '@constants/admin';
+import { isValidOrderBy } from '@constants/admin';
+import { cloudFunctionClient } from '@utils/axios';
 import AdminError from './error/adminError';
 
 const administratorsCollection = db.collection('administrators');

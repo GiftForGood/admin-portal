@@ -1,5 +1,5 @@
-import { db, firebaseAuth } from '../utils/firebase';
-import { BASE_URL } from '../utils/constants/siteUrl';
+import { db, firebaseAuth } from '@utils/firebase';
+import { BASE_URL } from '@constants/siteUrl';
 
 const administratorsCollection = db.collection('administrators');
 

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { TYPE, SECTOR } from '../../../utils/constants/npoOrganization';
+import { TYPE, SECTOR } from '@constants/npoOrganization';
 import { Alert, Select, InputField, Button, Heading, Stack } from '@kiwicom/orbit-components/lib';
 import Modal, { ModalSection, ModalFooter } from '@kiwicom/orbit-components/lib/Modal';
-import api from '../../../api';
+import api from '@api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Button } from '@kiwicom/orbit-components/';
 import Table, { TableHead, TableBody, TableRow, TableCell } from '@kiwicom/orbit-components/lib/Table';
-import api from '../../../../api';
-import { getFormattedDateTime } from '../../../../utils/time/time';
-import CreateAdminModal from '../../modal/createAdmin/CreateAdminModal';
+import api from '@api';
+import { getFormattedDateTime } from '@utils/time/time';
+import CreateAdminModal from '@components/modal/createAdmin/CreateAdminModal';
 
 const AdminsPage = () => {
   const [admins, setAdmins] = useState([]);

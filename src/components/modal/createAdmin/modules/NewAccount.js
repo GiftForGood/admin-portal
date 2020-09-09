@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Alert, Button, Stack, InputField, Text } from '@kiwicom/orbit-components/lib';
-import api from '../../../../../api';
+import api from '@api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 

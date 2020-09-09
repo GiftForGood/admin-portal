@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../../../api';
-import { BASE_URL } from '../../../../utils/constants/siteUrl';
+import api from '@api';
+import { BASE_URL } from '@constants/siteUrl';
 import Error from 'next/error';
-import useLocalStorage from '../../../../utils/hooks/useLocalStorage';
+import useLocalStorage from '@utils/hooks/useLocalStorage';
 import { Loading } from '@kiwicom/orbit-components';
 import { useRouter } from 'next/router';
-import { client } from '../../../../utils/axios';
+import { client } from '@utils/axios';
 
 const ActionPage = ({ url, continueUrl }) => {
   const [isError, setIsError] = useState(false);

@@ -1,12 +1,12 @@
 import React from 'react';
-import { isAuthenticated } from '../../utils/authentication/authentication';
-import api from '../../api';
-import SessionProvider from '../../src/components/session/modules/SessionProvider';
-import MaxWidthContainer from '../../src/components/containers/MaxWidthContainer';
-import NpoApplicationPage from '../../src/components/npo-applications/pages/NpoApplicationPage';
+import { isAuthenticated } from '@utils/authentication/authentication';
+import api from '@api';
+import SessionProvider from '@components/session/modules/SessionProvider';
+import MaxWidthContainer from '@components/containers/MaxWidthContainer';
+import NpoApplicationPage from '@components/npo-applications/pages/NpoApplicationPage';
 
 import dynamic from 'next/dynamic';
-const TopNavigationBar = dynamic(() => import('../../src/components/navbar/modules/TopNavigationBar'), { ssr: false });
+const TopNavigationBar = dynamic(() => import('@components/navbar/modules/TopNavigationBar'), { ssr: false });
 
 export async function getServerSideProps({ params, req, res, query }) {
   const npoApplicationId = params.npoApplicationId;
