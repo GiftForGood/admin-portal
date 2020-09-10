@@ -18,7 +18,7 @@ export const isValidRole = (role) => {
   return ROLES.includes(role);
 };
 
-export const optionsRoles = [
+export const OPTIONS_ROLES = [
   {
     label: 'Admin',
     value: ADMIN_ROLE,

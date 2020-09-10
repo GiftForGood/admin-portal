@@ -3,7 +3,7 @@ import { Alert, Button, Stack, InputField, Select } from '@kiwicom/orbit-compone
 import api from '@api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { ROLES, optionsRoles } from '@constants/admin';
+import { ROLES, OPTIONS_ROLES } from '@constants/admin';
 
 const ExistingAccount = ({ onHide, rerenderTable }) => {
   const [alertTitle, setAlertTitle] = useState('');
@@ -77,7 +77,7 @@ const ExistingAccount = ({ onHide, rerenderTable }) => {
           {...formik.getFieldProps('adminRole')}
           label="Admin role"
           name="adminRole"
-          options={optionsRoles}
+          options={OPTIONS_ROLES}
           placeholder="Select a role"
           size="normal"
         />
