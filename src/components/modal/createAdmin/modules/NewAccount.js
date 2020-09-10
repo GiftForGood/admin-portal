@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Alert, Button, Stack, InputField, Text } from '@kiwicom/orbit-components/lib';
+import { Alert, Button, Stack, InputField, Text, Select } from '@kiwicom/orbit-components/lib';
 import api from '@api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { ROLES, OPTIONS_ROLES } from '@constants/admin';
 
 const NewAccount = ({ onHide, rerenderTable }) => {
   const [alertTitle, setAlertTitle] = useState('');
@@ -19,7 +20,7 @@ const NewAccount = ({ onHide, rerenderTable }) => {
 
   const handleFormSubmission = (values) => {
     api.admins
-      .createWithNewAccount(values.email, values.password, values.name)
+      .createWithNewAccount(values.email, values.password, values.name, values.adminRole)
       .then(() => {
         onHide();
         rerenderTable();
@@ -43,6 +44,7 @@ const NewAccount = ({ onHide, rerenderTable }) => {
     passwordConfirmation: Yup.string()
       .required('Required')
       .oneOf([Yup.ref('password'), null], 'Passwords must match'),
+    adminRole: Yup.string().required('Required').oneOf(ROLES, 'Admin Role does not match any existing roles'),
   });
 
   const formik = useFormik({
@@ -51,6 +53,7 @@ const NewAccount = ({ onHide, rerenderTable }) => {
       name: '',
       password: '',
       passwordConfirmation: '',
+      adminRole: '',
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -106,6 +109,17 @@ const NewAccount = ({ onHide, rerenderTable }) => {
               : ''
           }
           {...formik.getFieldProps('passwordConfirmation')}
+        />
+
+        <Select
+          disabled={formik.isSubmitting}
+          error={formik.touched.adminRole && formik.errors.adminRole ? formik.errors.adminRole : ''}
+          {...formik.getFieldProps('adminRole')}
+          label="Admin role"
+          name="adminRole"
+          options={OPTIONS_ROLES}
+          placeholder="Select a role"
+          size="normal"
         />
         {showAlert ? (
           <Alert icon title={alertTitle} type={alertType}>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Alert, Button, Stack, InputField } from '@kiwicom/orbit-components/lib';
+import { Alert, Button, Stack, InputField, Select } from '@kiwicom/orbit-components/lib';
 import api from '@api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { ROLES, OPTIONS_ROLES } from '@constants/admin';
 
 const ExistingAccount = ({ onHide, rerenderTable }) => {
   const [alertTitle, setAlertTitle] = useState('');
@@ -19,7 +20,7 @@ const ExistingAccount = ({ onHide, rerenderTable }) => {
 
   const handleFormSubmission = (values) => {
     api.admins
-      .createFromExistingAccount(values.email, values.name)
+      .createFromExistingAccount(values.email, values.name, values.adminRole)
       .then(() => {
         onHide();
         rerenderTable();
@@ -34,12 +35,14 @@ const ExistingAccount = ({ onHide, rerenderTable }) => {
   const validationSchema = Yup.object().shape({
     email: Yup.string().email('Email must be a valid email').required('Required'),
     name: Yup.string().required('Required'),
+    adminRole: Yup.string().required('Required').oneOf(ROLES, 'Admin Role does not match any existing roles'),
   });
 
   const formik = useFormik({
     initialValues: {
       email: '',
       name: '',
+      adminRole: '',
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
@@ -67,6 +70,16 @@ const ExistingAccount = ({ onHide, rerenderTable }) => {
           placeholder="Name"
           error={formik.touched.name && formik.errors.name ? formik.errors.name : ''}
           {...formik.getFieldProps('name')}
+        />
+        <Select
+          disabled={formik.isSubmitting}
+          error={formik.touched.adminRole && formik.errors.adminRole ? formik.errors.adminRole : ''}
+          {...formik.getFieldProps('adminRole')}
+          label="Admin role"
+          name="adminRole"
+          options={OPTIONS_ROLES}
+          placeholder="Select a role"
+          size="normal"
         />
         {showAlert ? (
           <Alert icon title={alertTitle} type={alertType}>

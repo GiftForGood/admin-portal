@@ -1,6 +1,6 @@
 import { db, firebaseAuth } from '@utils/firebase';
-import { ORDER_BY } from '@constants/admin';
-import { isValidOrderBy } from '@constants/admin';
+import { ORDER_BY, ROLES } from '@constants/admin';
+import { isValidOrderBy, isValidRole } from '@constants/admin';
 import { cloudFunctionClient } from '@utils/axios';
 import AdminError from './error/adminError';
 
@@ -75,10 +75,15 @@ class AdminsAPI {
    * Create a new admin from an existing account
    * @param {string} email
    * @param {string} name
+   * @param {string} role Check constants/admin.js to see all the valid roles type
    * @throws {AdminError}
    * @return {array} [newAdminProfile, newAdminInfo]
    */
-  async createFromExistingAccount(email, name) {
+  async createFromExistingAccount(email, name, role) {
+    if (!isValidRole(role)) {
+      throw new AdminError('invalid-role', `${role} is not a valid admin role. Only ${ROLES} are valid`);
+    }
+
     const idToken = await firebaseAuth.currentUser.getIdToken();
     const adminId = firebaseAuth.currentUser.uid;
     const data = {
@@ -86,6 +91,7 @@ class AdminsAPI {
       rootAdminToken: idToken,
       email: email,
       name: name,
+      role: role,
     };
 
     const res = await cloudFunctionClient.post('/registerAdminWithExistingAccount', data);
@@ -106,10 +112,15 @@ class AdminsAPI {
    * @param {string} email
    * @param {string} password
    * @param {string} name
+   * @param {string} role Check constants/admin.js to see all the valid roles type
    * @throws {AdminError}
    * @return {array} [newAdminProfile, newAdminInfo]
    */
-  async createWithNewAccount(email, password, name) {
+  async createWithNewAccount(email, password, name, role) {
+    if (!isValidRole(role)) {
+      throw new AdminError('invalid-role', `${role} is not a valid admin role. Only ${ROLES} are valid`);
+    }
+
     const idToken = await firebaseAuth.currentUser.getIdToken();
     const adminId = firebaseAuth.currentUser.uid;
     const data = {
@@ -118,6 +129,7 @@ class AdminsAPI {
       email: email,
       password: password,
       name: name,
+      role: role,
     };
 
     const res = await cloudFunctionClient.post('/registerAdminWithNewAccount', data);
