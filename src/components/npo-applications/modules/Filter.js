@@ -4,7 +4,7 @@ import { Popover, Button, ListChoice } from '@kiwicom/orbit-components/';
 import { ChevronDown } from '@kiwicom/orbit-components/lib/icons';
 
 const Filter = ({ onSelectedFilter }) => {
-  const [currentFilter, setCurrentFilter] = useState(STATUS_FILTER_TYPE.ALL);
+  const [currentFilter, setCurrentFilter] = useState(STATUS_FILTER_TYPE.PENDING);
 
   return (
     <Popover
