@@ -17,3 +17,18 @@ export const ROLES = [ADMIN_ROLE, ADMIN_EDITOR_ROLE, ADMIN_VERIFIER_ROLE];
 export const isValidRole = (role) => {
   return ROLES.includes(role);
 };
+
+export const optionsRoles = [
+  {
+    label: 'Admin',
+    value: ADMIN_ROLE,
+  },
+  {
+    label: 'Admin Editor',
+    value: ADMIN_EDITOR_ROLE,
+  },
+  {
+    label: 'Admin Verifier',
+    value: ADMIN_VERIFIER_ROLE,
+  },
+];
