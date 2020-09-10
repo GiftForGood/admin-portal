@@ -95,7 +95,7 @@ const NpoApplicationsPage = () => {
             deserializeFirestoreTimestampToUnixTimestamp(data);
             const { organization, name, appliedDateTime, status, admin } = data;
             return (
-              <TableRow>
+              <TableRow key={appSnapshot.id}>
                 <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
                   {index + 1}
                 </TableCell>
