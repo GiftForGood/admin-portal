@@ -8,9 +8,10 @@ import BadgeStatus from '../modules/BadgeStatus';
 import Filter from '../modules/Filter';
 import { ORDER_BY } from '@constants/npoVerification';
 import { deserializeFirestoreTimestampToUnixTimestamp } from '@utils/firebase/deserializer';
+import { STATUS_FILTER_TYPE } from '@constants/npoVerification';
 
 const NpoApplicationsPage = () => {
-  const [filterStatus, setFilterStatus] = useState();
+  const [filterStatus, setFilterStatus] = useState(STATUS_FILTER_TYPE.PENDING);
   const [applications, setApplications] = useState([]);
   const router = useRouter();
 
@@ -94,7 +95,7 @@ const NpoApplicationsPage = () => {
             deserializeFirestoreTimestampToUnixTimestamp(data);
             const { organization, name, appliedDateTime, status, admin } = data;
             return (
-              <TableRow>
+              <TableRow key={appSnapshot.id}>
                 <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
                   {index + 1}
                 </TableCell>
