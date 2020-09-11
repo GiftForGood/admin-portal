@@ -7,7 +7,7 @@ import {
 } from '@constants/emailTemplate';
 import { STATUS_FILTER_TYPE, ORDER_BY, STATUS, ACTIONS } from '@constants/npoVerification';
 import { isValidStatusFilterType, isValidOrderBy } from '@constants/npoVerification';
-import { getCurrentAdmin } from './common/currentUser';
+import { getCurrentAdminVerifierAndAbove } from './common/currentUser';
 import { cloudFunctionClient } from '@utils/axios';
 import NPOVerificationError from './error/npoVerificationError';
 
@@ -130,7 +130,7 @@ class NPOVerifications {
   async lockForReview(id) {
     let admin;
     try {
-      admin = await getCurrentAdmin();
+      admin = await getCurrentAdminVerifierAndAbove();
     } catch (err) {
       throw new NPOVerificationError('invalid-current-user', err.message);
     }
@@ -177,7 +177,7 @@ class NPOVerifications {
   async unlockForReview(id) {
     let admin;
     try {
-      admin = await getCurrentAdmin();
+      admin = await getCurrentAdminVerifierAndAbove();
     } catch (err) {
       throw new NPOVerificationError('invalid-current-user', err.message);
     }
@@ -234,7 +234,7 @@ class NPOVerifications {
   async accept(id) {
     let admin;
     try {
-      admin = await getCurrentAdmin();
+      admin = await getCurrentAdminVerifierAndAbove();
     } catch (err) {
       throw new NPOVerificationError('invalid-current-user', err.message);
     }
@@ -292,7 +292,7 @@ class NPOVerifications {
   async reject(id, reason) {
     let admin;
     try {
-      admin = await getCurrentAdmin();
+      admin = await getCurrentAdminVerifierAndAbove();
     } catch (err) {
       throw new NPOVerificationError('invalid-current-user', err.message);
     }
@@ -347,7 +347,7 @@ class NPOVerifications {
   async requestForResubmission(id, reason) {
     let admin;
     try {
-      admin = await getCurrentAdmin();
+      admin = await getCurrentAdminVerifierAndAbove();
     } catch (err) {
       throw new NPOVerificationError('invalid-current-user', err.message);
     }
