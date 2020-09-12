@@ -18,7 +18,7 @@ const Frame = styled.div`
 `;
 
 const EditorFrame = styled.div`
-  max-height: 80vh;
+  max-height: 78vh;
   overflow: auto;
 `;
 
@@ -82,9 +82,7 @@ const LegalPage = () => {
 
       <Stack direction="row">
         <Container>
-          <EditorFrame>
-            <ReactQuill theme="snow" value={value} modules={modules} onChange={setValue} />
-          </EditorFrame>
+          <ReactQuill style={{ height: '75vh' }} theme="snow" value={value} modules={modules} onChange={setValue} />
         </Container>
         <Container>
           <Frame>
