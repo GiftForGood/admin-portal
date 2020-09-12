@@ -16,6 +16,12 @@ const Frame = styled.div`
   border: 1px solid black;
   padding: 5px;
 `;
+
+const EditorFrame = styled.div`
+  max-height: 80vh;
+  overflow: auto;
+`;
+
 const LegalPage = () => {
   const [filter, setFilter] = useState(LEGAL_TYPE.PRIVACY_POLICY);
   const [value, setValue] = useState('');
@@ -40,9 +46,8 @@ const LegalPage = () => {
         if (data) {
           setValue(data.content);
         } else {
-          setValue("");
+          setValue('');
         }
-       
       })
       .catch((error) => {
         console.error(error);
@@ -70,16 +75,22 @@ const LegalPage = () => {
     <Stack>
       <Stack justify="between" direction="row">
         <Filter onSelectedFilter={selectedFilter} />
-        <Button loading={saving} onClick={() => saveLegalDocument(value)}>Save</Button>
+        <Button loading={saving} onClick={() => saveLegalDocument(value)}>
+          Save
+        </Button>
       </Stack>
 
       <Stack direction="row">
         <Container>
-          <ReactQuill theme="snow" value={value} modules={modules} onChange={setValue} />
+          <EditorFrame>
+            <ReactQuill theme="snow" value={value} modules={modules} onChange={setValue} />
+          </EditorFrame>
         </Container>
         <Container>
           <Frame>
-            <div className="ql-editor">{ReactHtmlParser(value)}</div>
+            <EditorFrame>
+              <div className="ql-editor">{ReactHtmlParser(value)}</div>
+            </EditorFrame>
           </Frame>
         </Container>
       </Stack>
