@@ -2,7 +2,7 @@ import AuthAPI from './auth';
 import AdminsAPI from './admins';
 import NPOVerifications from './npoVerifications';
 import NPOOrganizations from './npoOrganizations';
-import LegalAPI from './legal'; 
+import LegalAPI from './legal';
 
 class API {
   auth = new AuthAPI();
