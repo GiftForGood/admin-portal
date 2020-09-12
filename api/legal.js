@@ -14,7 +14,7 @@ class LegalAPI {
     }
 
     const snapshot = await legalCollection.doc(type).get();
-    return snapshot.data();
+    return snapshot;
   }
 
   async update(content, type) {
@@ -32,7 +32,7 @@ class LegalAPI {
     };
     await legalDoc.update(data);
 
-    return (await legalDoc.get()).data();
+    return await legalDoc.get();
   }
 }
 

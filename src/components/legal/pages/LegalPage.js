@@ -42,9 +42,9 @@ const LegalPage = () => {
   useEffect(() => {
     api.legal
       .get(filter)
-      .then((data) => {
-        if (data) {
-          setValue(data.content);
+      .then((dataSnapshot) => {
+        if (dataSnapshot.exists) {
+          setValue(dataSnapshot.data().content);
         } else {
           setValue('');
         }
