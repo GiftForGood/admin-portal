@@ -37,6 +37,10 @@ const LegalPage = () => {
       ['link'],
       ['clean'],
     ],
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false
+    }
   };
 
   useEffect(() => {
@@ -82,7 +86,7 @@ const LegalPage = () => {
 
       <Stack direction="row">
         <Container>
-          <ReactQuill style={{ height: '75vh' }} theme="snow" value={value} modules={modules} onChange={setValue} />
+          <ReactQuill style={{ height: '75vh' }} theme="snow" value={value} modules={modules} onChange={setValue} preserveWhitespace={false}/>
         </Container>
         <Container>
           <Frame>
