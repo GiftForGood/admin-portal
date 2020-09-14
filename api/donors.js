@@ -109,7 +109,34 @@ class DonorCollectionsAPI {
    * @throws {FirebaseError}
    * @return {object} A firebase document of the banned donor info
    */
-  async ban(id) {}
+  // async ban(id) {
+  //   let admin;
+  //   try {
+  //     admin = await getCurrentAdminVerifierAndAbove();
+  //   } catch (err) {
+  //     throw new DonorError('invalid-current-user', err.message);
+  //   }
+
+  //   const snapshot = await donorsCollection.get(id);
+
+  //   if (!snapshot) throw new DonorError('invalid-donor', 'Donor does not exist');
+
+  //   if (snapshot.data().isBlocked) {
+  //     throw new DonorError('invalid-ban', 'Donor is already banned');
+  //   }
+
+  //   let ref = donorsCollection.doc(id);
+  //   const banInfo = {
+  //     isBlocked: true,
+  //     blockedByAdmin: {
+  //       id: admin.adminId,
+  //       name: admin.name,
+  //     }
+  //   }
+  //   await ref.update(banInfo);
+
+  //   return ref.get();
+  // }
 }
 
 export default DonorCollectionsAPI;
