@@ -45,6 +45,12 @@ const TopLeftNavigation = ({ onHamburgerClick }) => {
             </ButtonLink>
           </Link>
 
+          <Link href="/legal">
+            <ButtonLink transparent type="secondary" href={'/legal'}>
+              Legal
+            </ButtonLink>
+          </Link>
+
           <Popover
             content={
               <Stack direction="column" spacing="extraTight">

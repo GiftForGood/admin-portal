@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import ReactHtmlParser from 'react-html-parser';
-import { Stack, Button } from '@kiwicom/orbit-components/lib';
+import { Stack, Button, Grid } from '@kiwicom/orbit-components/lib';
 import styled from 'styled-components';
 import Filter from '../modules/Filter';
 import api from '@api';
@@ -84,7 +84,7 @@ const LegalPage = () => {
         </Button>
       </Stack>
 
-      <Stack direction="row">
+      <Grid columns="1fr 1fr" gap="20px">
         <Container>
           <ReactQuill
             style={{ height: '75vh' }}
@@ -102,7 +102,7 @@ const LegalPage = () => {
             </EditorFrame>
           </Frame>
         </Container>
-      </Stack>
+      </Grid>
     </Stack>
   );
 };
