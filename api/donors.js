@@ -42,6 +42,17 @@ class DonorCollectionsAPI {
   }
 
   /**
+   * Get a donor by id.
+   * @param {string} id the id of the donor
+   * @throws {DonorError}
+   * @throws {FirebaseError}
+   * @return {object} A firebase document of the donor info
+   */
+  async get(id) {
+    return donorsCollection.doc(id).get();
+  }
+
+  /**
    *
    * Search for the donor that has an email that is exactly the search term
    * @param {string} email the email string to search for
