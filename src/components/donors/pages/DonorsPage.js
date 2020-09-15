@@ -86,6 +86,9 @@ const DonorsPage = () => {
               Email
             </TableCell>
             <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+              Joined On
+            </TableCell>
+            <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
               Last Login On
             </TableCell>
             <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
@@ -110,6 +113,9 @@ const DonorsPage = () => {
                 </TableCell>
                 <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
                   {donor.email}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {getFormattedDateTime(donor.joinedDateTime.toMillis())}
                 </TableCell>
                 <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
                   {getFormattedDateTime(donor.lastLoggedInDateTime.toMillis())}

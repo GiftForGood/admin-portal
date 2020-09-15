@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Button, Text, Heading } from '@kiwicom/orbit-components/';
+import { Stack, Button, Text, Heading, InputField } from '@kiwicom/orbit-components/';
 import api from '@api';
 import { DONOR_TYPES } from '@constants/donor';
 import ConfirmationModal from '../modules/ConfirmationModal';
@@ -8,6 +8,8 @@ import styled from 'styled-components';
 
 const DonorDetailsContainer = styled.div`
   margin-top: 100px;
+  max-width: 1000px;
+  margin: 0 auto;
 `;
 
 const DonorPage = ({ donorId }) => {
@@ -40,20 +42,28 @@ const DonorPage = ({ donorId }) => {
   const donorData = donor.data();
   return (
     <DonorDetailsContainer>
-      <Heading spaceAfter="largest">Donor Details</Heading>
+      <Stack direction="row" justify="end">
+        <Button disabled={donorData.isCorporatePartner} onClick={openCorporateModal}>
+          Make Corporate
+        </Button>
+        <Button type="critical" onClick={openBanModal}>
+          Ban
+        </Button>
+      </Stack>
       <Stack>
-        <Text>Name: {donorData.name}</Text>
-        <Text>Email: {donorData.email}</Text>
-        <Text>Last Logged-in Date: {getFormattedDateTime(donorData.lastLoggedInDateTime.toMillis())}</Text>
-        <Text>Donor Type: {donorData.isCorporatePartner ? DONOR_TYPES.CORPORATE : DONOR_TYPES.NORMAL}</Text>
-        <Stack direction="row">
-          <Button disabled={donorData.isCorporatePartner} onClick={openCorporateModal}>
-            Make Corporate
-          </Button>
-          <Button type="critical" onClick={openBanModal}>
-            Ban
-          </Button>
-        </Stack>
+        <InputField readOnly label="Name" value={donorData.name} />
+        <InputField readOnly label="Email" value={donorData.email} />
+        <InputField readOnly label="Joined Date" value={getFormattedDateTime(donorData.joinedDateTime.toMillis())} />
+        <InputField
+          readOnly
+          label="Last Logged-in Date"
+          value={getFormattedDateTime(donorData.lastLoggedInDateTime.toMillis())}
+        />
+        <InputField
+          readOnly
+          label="Donor Type"
+          value={donorData.isCorporatePartner ? DONOR_TYPES.CORPORATE : DONOR_TYPES.NORMAL}
+        />
       </Stack>
       <ConfirmationModal
         title="Make Corporate Donor"
