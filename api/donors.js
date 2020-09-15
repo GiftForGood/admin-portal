@@ -13,7 +13,7 @@ class DonorCollectionsAPI {
    * @param {object} lastQueriedDocument last queried firebase document to start the query after. If the field is not given, the query will start from the first document
    * @throws {DonorError}
    * @throws {FirebaseError}
-   * @return {array} A list firebase documents of the donor infos
+   * @return {array} A list firebase documents of the donor infos, ordered by descending order of joined date time
    *
    */
   async getAll(filterType = DONOR_TYPES.ALL, lastQueriedDocument = null) {
@@ -32,6 +32,8 @@ class DonorCollectionsAPI {
     if (filterType === DONOR_TYPES.CORPORATE) {
       query = query.where('isCorporatePartner', '==', true);
     }
+
+    query = query.orderBy('joinedDateTime', 'desc');
 
     if (lastQueriedDocument !== null) {
       query = query.startAfter(lastQueriedDocument);
