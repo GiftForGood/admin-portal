@@ -67,78 +67,68 @@ class DonorCollectionsAPI {
   }
 
   /**
-   * NOTE: wait until emulator is up, then only test
+   * TODO: wait for tjy
    * Converts existing normal donor to corporate donor
    * @param {string} id the id of the donor to be converted to corporate donor
    * @throws {DonorError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the updated donor info
    */
-  // async makeDonorCorporate(id) {
-  //   let admin;
-  //   try {
-  //     admin = await getCurrentAdminVerifierAndAbove();
-  //   } catch (err) {
-  //     throw new DonorError('invalid-current-user', err.message);
-  //   }
-
-  //   const snapshot = await donorsCollection.get(id);
-
-  //   if (!snapshot) throw new DonorError('invalid-donor', 'Donor does not exist');
-
-  //   if (snapshot.data().isCorporate) {
-  //     throw new DonorError('invalid-conversion', 'Donor is already a corporate donor');
-  //   }
-
-  //   let ref = donorsCollection.doc(id);
-  //   const conversionInfo = {
-  //     isCorporatePartner: true,
-  //     admin: {
-  //       id: admin.adminId,
-  //       name: admin.name,
-  //     }
-  //   }
-  //   await ref.update(conversionInfo);
-
-  //   return ref.get();
-  // }
+  async makeDonorCorporate(id) {
+    // let admin;
+    // try {
+    //   admin = await getCurrentAdminVerifierAndAbove();
+    // } catch (err) {
+    //   throw new DonorError('invalid-current-user', err.message);
+    // }
+    // const snapshot = await donorsCollection.doc(id).get();
+    // if (!snapshot) throw new DonorError('invalid-donor', 'Donor does not exist');
+    // if (snapshot.data().isCorporate) {
+    //   throw new DonorError('invalid-conversion', 'Donor is already a corporate donor');
+    // }
+    // let ref = donorsCollection.doc(id);
+    // const conversionInfo = {
+    //   isCorporatePartner: true,
+    //   madeCorporateByAdmin: {
+    //     id: admin.adminId,
+    //     name: admin.name,
+    //   },
+    // };
+    // await ref.update(conversionInfo);
+    // return ref.get();
+  }
 
   /**
-   * NOTE: wait until emulator is up, then only test
+   * TODO: wait for tjy
    * Ban a donor
    * @param {string} id
    * @throws {DonorError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the banned donor info
    */
-  // async ban(id) {
-  //   let admin;
-  //   try {
-  //     admin = await getCurrentAdminVerifierAndAbove();
-  //   } catch (err) {
-  //     throw new DonorError('invalid-current-user', err.message);
-  //   }
-
-  //   const snapshot = await donorsCollection.get(id);
-
-  //   if (!snapshot) throw new DonorError('invalid-donor', 'Donor does not exist');
-
-  //   if (snapshot.data().isBlocked) {
-  //     throw new DonorError('invalid-ban', 'Donor is already banned');
-  //   }
-
-  //   let ref = donorsCollection.doc(id);
-  //   const banInfo = {
-  //     isBlocked: true,
-  //     blockedByAdmin: {
-  //       id: admin.adminId,
-  //       name: admin.name,
-  //     }
-  //   }
-  //   await ref.update(banInfo);
-
-  //   return ref.get();
-  // }
+  async ban(id) {
+    // let admin;
+    // try {
+    //   admin = await getCurrentAdminVerifierAndAbove();
+    // } catch (err) {
+    //   throw new DonorError('invalid-current-user', err.message);
+    // }
+    // const snapshot = await donorsCollection.doc(id).get();
+    // if (!snapshot) throw new DonorError('invalid-donor', 'Donor does not exist');
+    // if (snapshot.data().isBlocked) {
+    //   throw new DonorError('invalid-ban', 'Donor is already banned');
+    // }
+    // let ref = donorsCollection.doc(id);
+    // const banInfo = {
+    //   isBlocked: true,
+    //   blockedByAdmin: {
+    //     id: admin.adminId,
+    //     name: admin.name,
+    //   },
+    // };
+    // await ref.update(banInfo);
+    // return ref.get();
+  }
 }
 
 export default DonorCollectionsAPI;

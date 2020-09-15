@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Button, Text, Heading, InputField } from '@kiwicom/orbit-components/';
+import { Stack, Button, InputField } from '@kiwicom/orbit-components/';
 import api from '@api';
 import { DONOR_TYPES } from '@constants/donor';
 import ConfirmationModal from '../modules/ConfirmationModal';
@@ -22,11 +22,23 @@ const DonorPage = ({ donorId }) => {
   }, []);
 
   const makeCorporateDonor = () => {
-    setShowCorporateModal(false);
+    // api.donors
+    //   .makeDonorCorporate(donorId)
+    //   .then((updatedDonor) => {
+    //     setDonor(updatedDonor);
+    //     setShowCorporateModal(false);
+    //   })
+    //   .catch((err) => console.error(err));
   };
 
   const banDonor = () => {
-    setShowBanModal(false);
+    // api.donors
+    //   .ban(donorId)
+    //   .then((updatedDonor) => {
+    //     setDonor(updatedDonor);
+    //     setShowBanModal(false);
+    //   })
+    //   .catch((err) => console.error(err));
   };
 
   const openCorporateModal = () => {
@@ -46,7 +58,7 @@ const DonorPage = ({ donorId }) => {
         <Button disabled={donorData.isCorporatePartner} onClick={openCorporateModal}>
           Make Corporate
         </Button>
-        <Button type="critical" onClick={openBanModal}>
+        <Button disabled={donorData.isBlocked} type="critical" onClick={openBanModal}>
           Ban
         </Button>
       </Stack>
@@ -64,6 +76,10 @@ const DonorPage = ({ donorId }) => {
           label="Donor Type"
           value={donorData.isCorporatePartner ? DONOR_TYPES.CORPORATE : DONOR_TYPES.NORMAL}
         />
+        {/* {donorData.isCorporatePartner && (
+          <InputField readOnly label="Made Corporate By" value={donorData.madeCorporateByAdmin.name} />
+        )}
+        {donorData.isBlocked && <InputField readOnly label="Banned By" value={donorData.blockedByAdmin.name} />} */}
       </Stack>
       <ConfirmationModal
         title="Make Corporate Donor"
