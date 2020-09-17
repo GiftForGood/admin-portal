@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TYPE, SECTOR } from '@constants/npoOrganization';
 import { Alert, Select, InputField, Button, Heading, Stack } from '@kiwicom/orbit-components/lib';
 import Modal, { ModalSection, ModalFooter } from '@kiwicom/orbit-components/lib/Modal';
@@ -6,7 +6,7 @@ import api from '@api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-const CreateNpoOrganizationModal = ({ show, onHide, title, showToast }) => {
+const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoOrganization, rerenderTable }) => {
   if (!show) {
     return <div></div>;
   }
@@ -15,6 +15,7 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast }) => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertType, setAlertType] = useState('');
   const [alertDescription, setAlertDescription] = useState('');
+  const [editNpoOrganization, setEditNpoOrganization] = useState(null);
 
   const displayAlert = (title, description, type) => {
     setShowAlert(true);
@@ -23,12 +24,36 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast }) => {
     setAlertType(type);
   };
 
+  // Used to edit npo organization
+  useEffect(() => {
+    if (npoOrganization) {
+      let editNpoOrganization = {
+        name: npoOrganization.name,
+        type: npoOrganization.type,
+        uen: npoOrganization.uen,
+        address: npoOrganization.address,
+        sector: npoOrganization.sector,
+        classification: npoOrganization.classification,
+      };
+      setEditNpoOrganization(editNpoOrganization);
+    }
+  }, [npoOrganization]);
+
   const handleFormSubmission = (values) => {
+    if (mode === 'create') {
+      handleCreateNpoOrganization(values);
+    } else if (mode === 'edit') {
+      handleEditNpoOrganization(values);
+    }
+  };
+
+  const handleCreateNpoOrganization = (values) => {
     api.npoOrganizations
       .create(values.name, values.type, values.uen, values.address, values.sector, values.classification)
       .then(() => {
         onHide();
         showToast();
+        rerenderTable();
       })
       .catch((error) => {
         formik.setSubmitting(false);
@@ -47,6 +72,39 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast }) => {
       });
   };
 
+  const handleEditNpoOrganization = (values) => {
+    api.npoOrganizations
+      .update(
+        npoOrganization.id,
+        values.name,
+        values.address,
+        values.classification,
+        values.sector,
+        values.type,
+        values.uen
+      )
+      .then(() => {
+        onHide();
+        showToast();
+        rerenderTable();
+      })
+      .catch((error) => {
+        formik.setSubmitting(false);
+        console.log(error.code);
+        if (error.code === 'npo-organization/invalid-npo-type') {
+          displayAlert('Invalid NPO Type', error.message, 'critical');
+        } else if (error.code === 'npo-organization/invalid-npo-sector') {
+          displayAlert('Invalid NPO Sector', error.message, 'critical');
+        } else if (error.code === 'npo-organization/invalid-npo-id') {
+          displayAlert('Invalid NPO Id', error.message, 'critical');
+        } else if (error.code === 'npo-organization/failed-to-fetch-lat-long') {
+          displayAlert('Failed to fetch lat and long', error.message, 'critical');
+        } else {
+          displayAlert('Error', error.message, 'critical');
+        }
+      });
+  };
+
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Required'),
     type: Yup.string().required('Required'),
@@ -57,7 +115,7 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast }) => {
   });
 
   const formik = useFormik({
-    initialValues: {
+    initialValues: editNpoOrganization || {
       name: '',
       type: '',
       uen: '',
@@ -66,6 +124,7 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast }) => {
       classification: '',
     },
     validationSchema: validationSchema,
+    enableReinitialize: true,
     onSubmit: (values) => {
       handleFormSubmission(values);
     },
@@ -158,7 +217,7 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast }) => {
               Cancel
             </Button>
             <Button submit disabled={formik.isSubmitting} loading={formik.isSubmitting} onClick={formik.handleSubmit}>
-              Create
+              {mode === 'create' ? 'Create' : 'Update'}
             </Button>
           </Stack>
         </ModalFooter>
