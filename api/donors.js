@@ -1,6 +1,6 @@
-import { db } from '@utils/firebase';
+import { db, firebase } from '@utils/firebase';
 import { DONOR_BATCH_SIZE } from '@constants/batchSize';
-import { DONOR_TYPES, isValidFilterType } from '@constants/donor';
+import { DONOR_TYPES, isValidFilterType, ACTIONS } from '@constants/donor';
 import { getCurrentAdminVerifierAndAbove } from './common/currentUser';
 import DonorError from './error/donorError';
 
@@ -67,35 +67,81 @@ class DonorCollectionsAPI {
   }
 
   /**
-   * TODO: wait for tjy
    * Converts existing normal donor to corporate donor
    * @param {string} id the id of the donor to be converted to corporate donor
    * @throws {DonorError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the updated donor info
    */
-  async makeDonorCorporate(id) {
-    // let admin;
-    // try {
-    //   admin = await getCurrentAdminVerifierAndAbove();
-    // } catch (err) {
-    //   throw new DonorError('invalid-current-user', err.message);
-    // }
-    // const snapshot = await donorsCollection.doc(id).get();
-    // if (!snapshot) throw new DonorError('invalid-donor', 'Donor does not exist');
-    // if (snapshot.data().isCorporate) {
-    //   throw new DonorError('invalid-conversion', 'Donor is already a corporate donor');
-    // }
-    // let ref = donorsCollection.doc(id);
-    // const conversionInfo = {
-    //   isCorporatePartner: true,
-    //   madeCorporateByAdmin: {
-    //     id: admin.adminId,
-    //     name: admin.name,
-    //   },
-    // };
-    // await ref.update(conversionInfo);
-    // return ref.get();
+  async makeCorporate(id) {
+    let admin;
+    try {
+      admin = await getCurrentAdminVerifierAndAbove();
+    } catch (err) {
+      throw new DonorError('invalid-current-user', err.message);
+    }
+
+    const snapshot = await this.get(id);
+    if (!snapshot.exists) {
+      throw new DonorError('invalid-donor', 'Donor does not exist');
+    }
+    if (snapshot.data().isCorporatePartner) {
+      throw new DonorError('invalid-conversion', 'Donor is already a corporate donor');
+    }
+
+    let ref = donorsCollection.doc(id);
+    const donorConversionInfo = {
+      isCorporatePartner: true,
+    };
+    const actionInfo = {
+      type: ACTIONS.MAKE_CORPORATE,
+      name: admin.name,
+      email: admin.email,
+      appliedDateTime: firebase.firestore.FieldValue.serverTimestamp(),
+    }
+    await ref.update(donorConversionInfo);
+    ref.collection('actionsByAdmin').add(actionInfo);
+
+    return ref.get();
+  }
+
+  /**
+   * Converts corporate donor to existing normal donor
+   * @param {string} id the id of the donor
+   * @throws {DonorError}
+   * @throws {FirebaseError}
+   * @return {object} A firebase document of the updated donor info
+   */
+  async revokeCorporate(id) {
+    let admin;
+    try {
+      admin = await getCurrentAdminVerifierAndAbove();
+    } catch (err) {
+      throw new DonorError('invalid-current-user', err.message);
+    }
+
+    const snapshot = await this.get(id);
+    if (!snapshot.exists) {
+      throw new DonorError('invalid-donor', 'Donor does not exist');
+    }
+    if (!snapshot.data().isCorporatePartner) {
+      throw new DonorError('invalid-conversion', 'Donor is not a corporate donor');
+    }
+
+    let ref = donorsCollection.doc(id);
+    const donorConversionInfo = {
+      isCorporatePartner: false,
+    };
+    const actionInfo = {
+      type: ACTIONS.REVOKE_CORPORATE,
+      name: admin.name,
+      email: admin.email,
+      appliedDateTime: firebase.firestore.FieldValue.serverTimestamp(),
+    }
+    await ref.update(donorConversionInfo);
+    ref.collection('actionsByAdmin').add(actionInfo);
+
+    return ref.get();
   }
 
   /**
