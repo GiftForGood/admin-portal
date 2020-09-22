@@ -1,21 +1,59 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Button } from '@kiwicom/orbit-components/';
+import { Stack, Button, InputField } from '@kiwicom/orbit-components/';
 import Table, { TableHead, TableBody, TableRow, TableCell } from '@kiwicom/orbit-components/lib/Table';
 import api from '@api';
 import Filter from '../modules/Filter';
 import { ORDER_BY } from '@constants/npoOrganization';
 import CreateNpoOrganizationModal from '@components/modal/CreateNpoOrganizationModal';
 import { ToastContainer, toast } from 'react-toastify';
+import styled from 'styled-components';
+
+const SearchContainer = styled.div`
+  width: 400px;
+`;
 
 const NpoOrganizationsPage = () => {
+  const [mode, setMode] = useState();
+  const [viewOrganization, setViewOrganization] = useState(null);
   const [filterSector, setFilterSector] = useState();
   const [organizations, setOrganizations] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const showToast = () => toast.success('NPO Organization has been successfully created!');
+  const showToast = () =>
+    toast.success(`NPO Organization has been successfully ${mode === 'create' ? 'created' : 'updated'}!`);
+
+  const onShowCreateModal = () => {
+    setMode('create');
+    setViewOrganization(null);
+    setShowCreateModal(true);
+  };
+
+  const onShowEditModal = (organization) => {
+    setMode('edit');
+    setViewOrganization(organization);
+    setShowCreateModal(true);
+  };
+
+  const rerenderTable = () => {
+    getAllOrganizationsForSector();
+  };
 
   const onHideCreateModal = () => {
     setShowCreateModal(false);
+  };
+
+  const handleChangeSearchTerm = (searchTerm) => {
+    setSearchTerm(searchTerm);
+  };
+
+  const handleSearch = async () => {
+    if (searchTerm.trim().length > 0) {
+      const searchedNpoOrganization = await api.npoOrganizations.getByUEN(searchTerm.trim());
+      setOrganizations([searchedNpoOrganization]);
+    } else {
+      getAllOrganizationsForSector();
+    }
   };
 
   const loadMoreOrganizations = async () => {
@@ -63,13 +101,34 @@ const NpoOrganizationsPage = () => {
       <CreateNpoOrganizationModal
         show={showCreateModal}
         onHide={onHideCreateModal}
-        title="Create NPO Organization"
+        title={mode === 'create' ? 'Create NPO Organization' : 'NPO Organization'}
         showToast={showToast}
+        mode={mode}
+        npoOrganization={viewOrganization}
+        rerenderTable={rerenderTable}
       />
       <Stack direction="row" justify="between">
         <Filter onSelectedFilter={onSelectedFilter} />
-        <Button onClick={() => setShowCreateModal(true)}>Create NPO Organization</Button>
+        <SearchContainer>
+          <Stack direction="row">
+            <InputField
+              placeholder="NPO Organization UEN"
+              onChange={(event) => handleChangeSearchTerm(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.keyCode === 13) {
+                  handleSearch();
+                }
+              }}
+            />
+            <Button onClick={handleSearch}>Search</Button>
+          </Stack>
+        </SearchContainer>
       </Stack>
+
+      <Stack direction="row" justify="end">
+        <Button onClick={() => onShowCreateModal()}>Create NPO Organization</Button>
+      </Stack>
+
       <Table striped type="primary">
         <TableHead>
           <TableRow>
@@ -88,30 +147,42 @@ const NpoOrganizationsPage = () => {
             <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
               Type
             </TableCell>
+            <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+              Action
+            </TableCell>
           </TableRow>
         </TableHead>
 
-        <TableBody>
-          {organizations.map((appSnapshot, index) => (
-            <TableRow key={index}>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {index + 1}
-              </TableCell>
-              <TableCell align="left" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().name}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().uen}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().sector}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().type}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
+        {organizations[0] !== null && (
+          <TableBody>
+            {organizations.map((appSnapshot, index) => (
+              <TableRow key={index}>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {index + 1}
+                </TableCell>
+                <TableCell align="left" verticalAlign="baseline" whiteSpace="nowrap">
+                  {appSnapshot.data().name}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {appSnapshot.data().uen}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {appSnapshot.data().sector}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {appSnapshot.data().type}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  <Stack direction="row" justify="center">
+                    <Button size="small" onClick={() => onShowEditModal(appSnapshot.data())}>
+                      View
+                    </Button>
+                  </Stack>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        )}
       </Table>
 
       <Stack justify="center">

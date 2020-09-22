@@ -110,6 +110,22 @@ class NPOOrganizationsAPI {
 
   /**
    * Get a npo organization info
+   * @param {string} id the id of the npo organization
+   * @throws {FirebaseError}
+   * @return {object} A firebase document of the npo organization info
+   */
+  async getById(id) {
+    const snapshot = await npoOrganizationsCollection.doc(id).get();
+
+    if (!snapshot.exists) {
+      return null;
+    }
+
+    return snapshot;
+  }
+
+  /**
+   * Get a npo organization info
    * @param {string} name the name of the npo organization
    * @throws {FirebaseError}
    * @return {object} A firebase document of the npo organization info
@@ -148,6 +164,9 @@ class NPOOrganizationsAPI {
    * @param {string} address The address of the npo
    * @param {string} sector The sector the npo belong to. Check constants/npoOrganization.js to see all the valid sector type
    * @param {string} classification The classification that the npo belong to
+   * @throws {NPOOrganizationError}
+   * @throws {FirebaseError}
+   * @return {object} A firebase document of the new npo organization info
    */
   async create(name, type, uen, address, sector, classification) {
     if (!isValidType) {
@@ -191,6 +210,69 @@ class NPOOrganizationsAPI {
     await newOrganization.set(data);
 
     return newOrganization.get();
+  }
+
+  /**
+   * Update a npo organization information
+   * @param {string} name The name of the npo organization. Should be unique
+   * @param {string} type The type of npo organization. Check constants/npoOrganization.js to see all the valid type
+   * @param {string} uen The UEN number
+   * @param {string} address The address of the npo
+   * @param {string} sector The sector the npo belong to. Check constants/npoOrganization.js to see all the valid sector type
+   * @param {string} classification The classification that the npo belong to
+   * @throws {NPOOrganizationError}
+   * @throws {FirebaseError}
+   * @return {object} A firebase document of the updated npo organization info
+   */
+  async update(id, name, address, classification, sector, type, uen) {
+    if (!isValidType) {
+      throw new NPOOrganizationError(
+        'invalid-npo-type',
+        `"${type}" is not a valid npo type. Only ${Object.values(TYPE)} are valid.`
+      );
+    }
+    if (!isValidSector) {
+      throw new NPOOrganizationError(
+        'invalid-npo-sector',
+        `"${sector}" is not a valid sector. Only ${Object.value(SECTOR)} are valid.`
+      );
+    }
+
+    const ref = npoOrganizationsCollection.doc(id);
+    const snapshot = await ref.get();
+    if (!snapshot.exists) {
+      throw new NPOOrganizationError('invalid-npo-id', `npo organization with id of ${id} already exist`);
+    }
+
+    const orgData = snapshot.data();
+    let lat = orgData.latitude;
+    let long = orgData.longitude;
+    if (address != orgData.address) {
+      const locationsDetails = await getLocations([address]);
+      if (locationsDetails === null || locationsDetails.length <= 0) {
+        throw new NPOOrganizationError(
+          'failed-to-fetch-lat-long',
+          `Failed to fetch latitude and longitude for organization`
+        );
+      }
+
+      lat = locationsDetails[0].latitude;
+      long = locationsDetails[0].longitude;
+    }
+
+    const data = {
+      name: name,
+      type: type,
+      uen: uen,
+      address: address,
+      latitude: lat,
+      longitude: long,
+      sector: sector,
+      classification: classification,
+    };
+
+    await ref.update(data);
+    return ref.get();
   }
 }
 
