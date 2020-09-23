@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Stack, Button, InputField } from '@kiwicom/orbit-components/';
 import api from '@api';
-import { DONOR_TYPES } from '@constants/donor';
+import { DONOR_TYPES, ACTIONS } from '@constants/donor';
 import ConfirmationModal from '../modules/ConfirmationModal';
 import { getFormattedDateTime } from '@utils/time/time';
 import styled from 'styled-components';
@@ -22,13 +22,23 @@ const DonorPage = ({ donorId }) => {
   }, []);
 
   const makeCorporateDonor = () => {
-    // api.donors
-    //   .makeDonorCorporate(donorId)
-    //   .then((updatedDonor) => {
-    //     setDonor(updatedDonor);
-    //     setShowCorporateModal(false);
-    //   })
-    //   .catch((err) => console.error(err));
+    api.donors
+      .makeCorporate(donorId)
+      .then((updatedDonor) => {
+        setDonor(updatedDonor);
+        setShowCorporateModal(false);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const revokeCorporateDonor = () => {
+    api.donors
+      .revokeCorporate(donorId)
+      .then((updatedDonor) => {
+        setDonor(updatedDonor);
+        setShowCorporateModal(false);
+      })
+      .catch((err) => console.error(err));
   };
 
   const banDonor = () => {
@@ -55,8 +65,8 @@ const DonorPage = ({ donorId }) => {
   return (
     <DonorDetailsContainer>
       <Stack direction="row" justify="end">
-        <Button disabled={donorData.isCorporatePartner} onClick={openCorporateModal}>
-          Make Corporate
+        <Button onClick={openCorporateModal}>
+          {donorData.isCorporatePartner ? 'Revoke Corporate' : 'Make Corporate'}
         </Button>
         <Button disabled={donorData.isBlocked} type="critical" onClick={openBanModal}>
           Ban
@@ -77,15 +87,15 @@ const DonorPage = ({ donorId }) => {
           value={donorData.isCorporatePartner ? DONOR_TYPES.CORPORATE : DONOR_TYPES.NORMAL}
         />
         {/* {donorData.isCorporatePartner && (
-          <InputField readOnly label="Made Corporate By" value={donorData.madeCorporateByAdmin.name} />
-        )}
-        {donorData.isBlocked && <InputField readOnly label="Banned By" value={donorData.blockedByAdmin.name} />} */}
+          <InputField readOnly label="Made Corporate By" value={donorData.actionsByAdmin.filter((action) => action.type === ACTIONS.MAKE_CORPORATE)[0].name} />
+        )} */}
+        {/* {donorData.isBlocked && <InputField readOnly label="Banned By" value={donorData.blockedByAdmin.name} />} */}
       </Stack>
       <ConfirmationModal
-        title="Make Corporate Donor"
+        title={donorData.isCorporatePartner ? 'Revoke Corporate Donor' : 'Make Corporate Donor'}
         onShow={showCorporateModal}
         onClose={() => setShowCorporateModal(false)}
-        onConfirm={makeCorporateDonor}
+        onConfirm={donorData.isCorporatePartner ? revokeCorporateDonor : makeCorporateDonor}
       />
       <ConfirmationModal
         title="Ban Donor"

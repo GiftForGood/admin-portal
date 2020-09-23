@@ -98,7 +98,7 @@ class DonorCollectionsAPI {
       name: admin.name,
       email: admin.email,
       appliedDateTime: firebase.firestore.FieldValue.serverTimestamp(),
-    }
+    };
     await ref.update(donorConversionInfo);
     ref.collection('actionsByAdmin').add(actionInfo);
 
@@ -137,7 +137,7 @@ class DonorCollectionsAPI {
       name: admin.name,
       email: admin.email,
       appliedDateTime: firebase.firestore.FieldValue.serverTimestamp(),
-    }
+    };
     await ref.update(donorConversionInfo);
     ref.collection('actionsByAdmin').add(actionInfo);
 
