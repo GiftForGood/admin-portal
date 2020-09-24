@@ -221,29 +221,35 @@ const RightSideButtons = ({ admin, npoApplicationId, status, onError, removeErro
   );
 };
 
-const UenCard = ({ success, organizationDetails }) => {
+const UenCard = ({ success, organizations }) => {
   return (
     <Card title="UEN Checker">
       <CardSection>
         {success ? (
-          <Alert icon title="Match found" type="success" spaceAfter="large" />
+          <Alert icon title={`${organizations.length} match(es) found`} type="success" spaceAfter="large" />
         ) : (
           <Alert icon title="No match found" type="critical" spaceAfter="large" />
         )}
 
-        {organizationDetails ? (
-          <Stack>
-            <InputField readOnly label="UEN Registration Number" value={organizationDetails.uen} />
+        {organizations
+          ? organizations.map((organization) => (
+              <Card>
+                <CardSection expanded>
+                  <Stack>
+                    <InputField readOnly label="UEN Registration Number" value={organization.uen} />
 
-            <InputField readOnly label="Organization Name" value={organizationDetails.name} />
+                    <InputField readOnly label="Organization Name" value={organization.name} />
 
-            <InputField readOnly label="Address" value={organizationDetails.address} />
+                    <InputField readOnly label="Address" value={organization.address} />
 
-            <InputField readOnly label="Sector" value={organizationDetails.sector} />
+                    <InputField readOnly label="Sector" value={organization.sector} />
 
-            <InputField readOnly label="Classification" value={organizationDetails.classification} />
-          </Stack>
-        ) : null}
+                    <InputField readOnly label="Classification" value={organization.classification} />
+                  </Stack>
+                </CardSection>
+              </Card>
+            ))
+          : null}
       </CardSection>
     </Card>
   );
@@ -270,7 +276,7 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
   const [alertDescription, setAlertDescription] = useState('');
 
   const [showUenCheck, setShowUenCheck] = useState(false);
-  const [uenDetails, setUenDetails] = useState(null);
+  const [uenDetails, setUenDetails] = useState([]);
 
   const [showEmailCheck, setShowEmailCheck] = useState(false);
   const [emailDetails, setEmailDetails] = useState(null);
@@ -303,14 +309,15 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
   const checkUen = async () => {
     try {
       setShowUenCheck(false);
-      const orgDetails = await api.npoOrganizations.getByUEN(npoApplicationDetails.organization.registrationNumber);
-      if (orgDetails === null) {
+      const orgsDocs = await api.npoOrganizations.getByUEN(npoApplicationDetails.organization.registrationNumber);
+      if (orgsDocs === null) {
         throw new Error(
           `organization with UEN of ${npoApplicationDetails.organization.registrationNumber} does not exist`
         );
       }
+      const orgs = orgsDocs.map((orgDocs) => orgDocs.data());
       setShowUenCheck(true);
-      setUenDetails(orgDetails.data());
+      setUenDetails(orgs);
     } catch (error) {
       console.error(error.message);
       setShowUenCheck(true);
@@ -412,7 +419,7 @@ const NpoApplicationPage = ({ npoApplicationId }) => {
           <Button onClick={checkUen}>Check</Button>
         </Stack>
 
-        {showUenCheck ? <UenCard success={uenDetails ? true : false} organizationDetails={uenDetails} /> : null}
+        {showUenCheck ? <UenCard success={uenDetails.length > 0 ? true : false} organizations={uenDetails} /> : null}
       </Stack>
     </Container>
   );
