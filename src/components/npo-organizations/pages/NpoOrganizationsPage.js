@@ -50,7 +50,7 @@ const NpoOrganizationsPage = () => {
   const handleSearch = async () => {
     if (searchTerm.trim().length > 0) {
       const searchedNpoOrganization = await api.npoOrganizations.getByUEN(searchTerm.trim());
-      setOrganizations([searchedNpoOrganization]);
+      setOrganizations(searchedNpoOrganization);
     } else {
       getAllOrganizationsForSector();
     }
@@ -153,7 +153,7 @@ const NpoOrganizationsPage = () => {
           </TableRow>
         </TableHead>
 
-        {organizations[0] !== null && (
+        {organizations !== null && (
           <TableBody>
             {organizations.map((appSnapshot, index) => (
               <TableRow key={index}>

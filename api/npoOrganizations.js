@@ -153,7 +153,7 @@ class NPOOrganizationsAPI {
       return null;
     }
 
-    return snapshot.docs[0];
+    return snapshot.docs;
   }
 
   /**
