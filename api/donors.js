@@ -1,12 +1,14 @@
-import { db, firebase } from '@utils/firebase';
+import { db, firebase, firebaseAuth } from '@utils/firebase';
 import { DONOR_BATCH_SIZE } from '@constants/batchSize';
 import { DONOR_TYPES, isValidFilterType, ACTIONS } from '@constants/donor';
+import { DONOR } from '@constants/userType';
 import { getCurrentAdminVerifierAndAbove } from './common/currentUser';
+import { cloudFunctionClient } from '@utils/axios';
 import DonorError from './error/donorError';
 
 const donorsCollection = db.collection('donors');
 
-class DonorCollectionsAPI {
+class DonorsAPI {
   /**
    * Get a batch of donors by type. Only return results of NPO_ORGANIZATION_BATCH_SIZE
    * @param {string} filterType Check constants/donor.js to see all the valid filter type
@@ -98,7 +100,7 @@ class DonorCollectionsAPI {
       name: admin.name,
       email: admin.email,
       appliedDateTime: firebase.firestore.FieldValue.serverTimestamp(),
-    }
+    };
     await ref.update(donorConversionInfo);
     ref.collection('actionsByAdmin').add(actionInfo);
 
@@ -137,7 +139,7 @@ class DonorCollectionsAPI {
       name: admin.name,
       email: admin.email,
       appliedDateTime: firebase.firestore.FieldValue.serverTimestamp(),
-    }
+    };
     await ref.update(donorConversionInfo);
     ref.collection('actionsByAdmin').add(actionInfo);
 
@@ -145,36 +147,36 @@ class DonorCollectionsAPI {
   }
 
   /**
-   * TODO: wait for tjy
    * Ban a donor
    * @param {string} id
+   * @param {string} reason The reason for banning a user
    * @throws {DonorError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the banned donor info
    */
-  async ban(id) {
-    // let admin;
-    // try {
-    //   admin = await getCurrentAdminVerifierAndAbove();
-    // } catch (err) {
-    //   throw new DonorError('invalid-current-user', err.message);
-    // }
-    // const snapshot = await donorsCollection.doc(id).get();
-    // if (!snapshot) throw new DonorError('invalid-donor', 'Donor does not exist');
-    // if (snapshot.data().isBlocked) {
-    //   throw new DonorError('invalid-ban', 'Donor is already banned');
-    // }
-    // let ref = donorsCollection.doc(id);
-    // const banInfo = {
-    //   isBlocked: true,
-    //   blockedByAdmin: {
-    //     id: admin.adminId,
-    //     name: admin.name,
-    //   },
-    // };
-    // await ref.update(banInfo);
-    // return ref.get();
+  async ban(id, reason) {
+    const idToken = await firebaseAuth.currentUser.getIdToken();
+    const adminId = firebaseAuth.currentUser.uid;
+    const data = {
+      adminToken: idToken,
+      adminId: adminId,
+      userId: id,
+      reason: reason,
+      userType: DONOR,
+    };
+
+    const res = await cloudFunctionClient.post('/banUser', data);
+    const resData = res.data;
+
+    if (res.status != 200) {
+      throw new DonorError(resData.error.code, resData.error.message);
+    }
+    if (resData.error.code !== 'ban-user/success') {
+      throw new DonorError(resData.error.code, resData.error.message);
+    }
+
+    return donorsCollection.doc(id).get();
   }
 }
 
-export default DonorCollectionsAPI;
+export default DonorsAPI;
