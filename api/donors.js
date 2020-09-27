@@ -184,7 +184,7 @@ class DonorsAPI {
    * @param {string} reason The reason for unbanning a user
    * @throws {DonorError}
    * @throws {FirebaseError}
-   * @return {object} A firebase document of the banned donor info
+   * @return {object} A firebase document of the unbanned donor info
    */
   async unBan(id, reason) {
     const idToken = await firebaseAuth.currentUser.getIdToken();
