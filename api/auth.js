@@ -1,4 +1,4 @@
-import { db, firebaseAuth } from '@utils/firebase';
+import { db, firebaseAuth, firebase } from '@utils/firebase';
 import { BASE_URL } from '@constants/siteUrl';
 
 const administratorsCollection = db.collection('administrators');
@@ -70,7 +70,7 @@ class AuthAPI {
     const userDoc = administratorsCollection.doc(id);
 
     const data = {
-      lastLoggedInDateTime: Date.now(),
+      lastLoggedInDateTime: firebase.firestore.FieldValue.serverTimestamp(),
     };
     await userDoc.update(data);
 
