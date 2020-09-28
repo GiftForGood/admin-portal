@@ -3,6 +3,7 @@ import { Stack, Button, InputField } from '@kiwicom/orbit-components/';
 import api from '@api';
 import { DONOR_TYPES, ACTIONS } from '@constants/donor';
 import ConfirmationModal from '../modules/ConfirmationModal';
+import BanModal from '../modules/BanModal';
 import { getFormattedDateTime } from '@utils/time/time';
 import styled from 'styled-components';
 
@@ -41,14 +42,24 @@ const DonorPage = ({ donorId }) => {
       .catch((err) => console.error(err));
   };
 
-  const banDonor = () => {
-    // api.donors
-    //   .ban(donorId)
-    //   .then((updatedDonor) => {
-    //     setDonor(updatedDonor);
-    //     setShowBanModal(false);
-    //   })
-    //   .catch((err) => console.error(err));
+  const banDonor = (reason) => {
+    api.donors
+      .ban(donorId, reason)
+      .then((updatedDonor) => {
+        setDonor(updatedDonor);
+        setShowBanModal(false);
+      })
+      .catch((err) => console.error(err));
+  };
+
+  const unbanDonor = (reason) => {
+    api.donors
+      .unBan(donorId, reason)
+      .then((updatedDonor) => {
+        setDonor(updatedDonor);
+        setShowBanModal(false);
+      })
+      .catch((err) => console.error(err));
   };
 
   const openCorporateModal = () => {
@@ -69,7 +80,7 @@ const DonorPage = ({ donorId }) => {
           {donorData.isCorporatePartner ? 'Revoke Corporate' : 'Make Corporate'}
         </Button>
         <Button disabled={donorData.isBlocked} type="critical" onClick={openBanModal}>
-          Ban
+          {donorData.isBlocked ? 'Unban' : 'Ban'}
         </Button>
       </Stack>
       <Stack>
@@ -97,11 +108,12 @@ const DonorPage = ({ donorId }) => {
         onClose={() => setShowCorporateModal(false)}
         onConfirm={donorData.isCorporatePartner ? revokeCorporateDonor : makeCorporateDonor}
       />
-      <ConfirmationModal
-        title="Ban Donor"
+      <BanModal
+        title={donorData.isBlocked ? 'Unban Donor' : 'Ban Donor'}
+        description={donorData.isBlocked ? 'Reason to unban donor' : 'Reason to ban donor'}
         onShow={showBanModal}
         onClose={() => setShowBanModal(false)}
-        onConfirm={banDonor}
+        onConfirm={donorData.isBlocked ? unbanDonor : banDonor}
       />
     </DonorDetailsContainer>
   );
