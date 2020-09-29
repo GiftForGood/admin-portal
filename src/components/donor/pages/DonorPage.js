@@ -13,7 +13,7 @@ const DonorDetailsContainer = styled.div`
   margin: 0 auto;
 `;
 
-const DonorPage = ({ donorId }) => {
+const DonorPage = ({ donorId, user }) => {
   const [donor, setDonor] = useState(null);
   const [showCorporateModal, setShowCorporateModal] = useState(false);
   const [showBanModal, setShowBanModal] = useState(false);
@@ -73,13 +73,16 @@ const DonorPage = ({ donorId }) => {
   if (!donor) return null;
 
   const donorData = donor.data();
+  const isAdminVerifierAndAbove = (user.admin || user.adminEditor) && user.emailVerified;
+  const isAdminEditorAndAbove = (user.admin || user.adminEditor || user.adminVerifier) && user.emailVerified;
+
   return (
     <DonorDetailsContainer>
       <Stack direction="row" justify="end">
-        <Button onClick={openCorporateModal}>
+        <Button disabled={!isAdminVerifierAndAbove} onClick={openCorporateModal}>
           {donorData.isCorporatePartner ? 'Revoke Corporate' : 'Make Corporate'}
         </Button>
-        <Button disabled={donorData.isBlocked} type="critical" onClick={openBanModal}>
+        <Button disabled={!isAdminEditorAndAbove} type="critical" onClick={openBanModal}>
           {donorData.isBlocked ? 'Unban' : 'Ban'}
         </Button>
       </Stack>
@@ -97,10 +100,6 @@ const DonorPage = ({ donorId }) => {
           label="Donor Type"
           value={donorData.isCorporatePartner ? DONOR_TYPES.CORPORATE : DONOR_TYPES.NORMAL}
         />
-        {/* {donorData.isCorporatePartner && (
-          <InputField readOnly label="Made Corporate By" value={donorData.actionsByAdmin.filter((action) => action.type === ACTIONS.MAKE_CORPORATE)[0].name} />
-        )} */}
-        {/* {donorData.isBlocked && <InputField readOnly label="Banned By" value={donorData.blockedByAdmin.name} />} */}
       </Stack>
       <ConfirmationModal
         title={donorData.isCorporatePartner ? 'Revoke Corporate Donor' : 'Make Corporate Donor'}

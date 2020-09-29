@@ -23,7 +23,7 @@ const Donor = ({ donorId, user }) => {
     <SessionProvider user={user}>
       <TopNavigationBar />
       <MaxWidthContainer>
-        <DonorPage donorId={donorId} />
+        <DonorPage donorId={donorId} user={user} />
       </MaxWidthContainer>
     </SessionProvider>
   );
