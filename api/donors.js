@@ -179,14 +179,14 @@ class DonorsAPI {
   }
 
   /**
-   * UnBan a donor
+   * Unban a donor
    * @param {string} id
    * @param {string} reason The reason for unbanning a user
    * @throws {DonorError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the unbanned donor info
    */
-  async unBan(id, reason) {
+  async unban(id, reason) {
     const idToken = await firebaseAuth.currentUser.getIdToken();
     const adminId = firebaseAuth.currentUser.uid;
     const data = {
@@ -197,13 +197,13 @@ class DonorsAPI {
       userType: DONOR,
     };
 
-    const res = await cloudFunctionClient.post('/unBanUser', data);
+    const res = await cloudFunctionClient.post('/unbanUser', data);
     const resData = res.data;
 
     if (res.status != 200) {
       throw new DonorError(resData.error.code, resData.error.message);
     }
-    if (resData.error.code !== 'unBan-user/success') {
+    if (resData.error.code !== 'unban-user/success') {
       throw new DonorError(resData.error.code, resData.error.message);
     }
 

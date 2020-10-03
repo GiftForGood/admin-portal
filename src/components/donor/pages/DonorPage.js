@@ -54,7 +54,7 @@ const DonorPage = ({ donorId, user }) => {
 
   const unbanDonor = (reason) => {
     api.donors
-      .unBan(donorId, reason)
+      .unban(donorId, reason)
       .then((updatedDonor) => {
         setDonor(updatedDonor);
         setShowBanModal(false);
