@@ -4,6 +4,7 @@ import Table, { TableHead, TableBody, TableRow, TableCell } from '@kiwicom/orbit
 import api from '@api';
 import { getFormattedDateTime } from '@utils/time/time';
 import CreateAdminModal from '@components/modal/createAdmin/CreateAdminModal';
+import { deserializeFirestoreTimestampToUnixTimestamp } from '@utils/firebase/deserializer';
 
 const AdminsPage = () => {
   const [admins, setAdmins] = useState([]);
@@ -61,25 +62,30 @@ const AdminsPage = () => {
         </TableHead>
 
         <TableBody>
-          {admins.map((appSnapshot, index) => (
-            <TableRow key={index}>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {index + 1}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().name}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().email}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {getFormattedDateTime(appSnapshot.data().lastLoggedInDateTime)}
-              </TableCell>
-              <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
-                {appSnapshot.data().createdBy.adminName}
-              </TableCell>
-            </TableRow>
-          ))}
+          {admins.map((appSnapshot, index) => {
+            const data = appSnapshot.data();
+            deserializeFirestoreTimestampToUnixTimestamp(data);
+            const { name, email, lastLoggedInDateTime, createdBy } = data;
+            return (
+              <TableRow key={index}>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {index + 1}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {name}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {email}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {getFormattedDateTime(lastLoggedInDateTime)}
+                </TableCell>
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {createdBy.adminName}
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </Stack>

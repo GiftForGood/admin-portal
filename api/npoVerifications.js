@@ -1,4 +1,4 @@
-import { db, firebaseAuth } from '@utils/firebase';
+import { db, firebaseAuth, firebase } from '@utils/firebase';
 import { NPO_VERIFICATION_BATCH_SIZE } from '@constants/batchSize';
 import {
   VERIFICATION_ACCEPTED_ID,
@@ -145,7 +145,7 @@ class NPOVerifications {
       );
     }
 
-    const timeNow = Date.now();
+    const timeNow = firebase.firestore.FieldValue.serverTimestamp();
     const verificationInfo = {
       status: STATUS.REVIEWING,
       admin: {
@@ -202,7 +202,7 @@ class NPOVerifications {
       }
     });
 
-    const timeNow = Date.now();
+    const timeNow = firebase.firestore.FieldValue.serverTimestamp();
     const verificationInfo = {
       status: status,
       admin: {
@@ -249,7 +249,7 @@ class NPOVerifications {
       throw new NPOVerificationError('invalid-admin', 'only the reviewing admin can accept the verification');
     }
 
-    const timeNow = Date.now();
+    const timeNow = firebase.firestore.FieldValue.serverTimestamp();
     const verificationInfo = {
       status: STATUS.ACCEPTED,
       admin: {
@@ -307,7 +307,7 @@ class NPOVerifications {
       throw new NPOVerificationError('invalid-admin', 'only the reviewing admin can reject the verification');
     }
 
-    const timeNow = Date.now();
+    const timeNow = firebase.firestore.FieldValue.serverTimestamp();
     const verificationInfo = {
       status: STATUS.REJECTED,
       admin: {
@@ -365,7 +365,7 @@ class NPOVerifications {
       );
     }
 
-    const timeNow = Date.now();
+    const timeNow = firebase.firestore.FieldValue.serverTimestamp();
     const verificationInfo = {
       status: STATUS.RESUBMISSION,
       admin: {
