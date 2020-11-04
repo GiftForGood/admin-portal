@@ -169,13 +169,13 @@ class NPOOrganizationsAPI {
    * @return {object} A firebase document of the new npo organization info
    */
   async create(name, type, uen, address, sector, classification) {
-    if (!isValidType) {
+    if (!isValidType(type)) {
       throw new NPOOrganizationError(
         'invalid-npo-type',
         `"${type}" is not a valid npo type. Only ${Object.values(TYPE)} are valid.`
       );
     }
-    if (!isValidSector) {
+    if (!isValidSector(sector)) {
       throw new NPOOrganizationError(
         'invalid-npo-sector',
         `"${sector}" is not a valid sector. Only ${Object.value(SECTOR)} are valid.`
@@ -225,13 +225,13 @@ class NPOOrganizationsAPI {
    * @return {object} A firebase document of the updated npo organization info
    */
   async update(id, name, address, classification, sector, type, uen) {
-    if (!isValidType) {
+    if (!isValidType(type)) {
       throw new NPOOrganizationError(
         'invalid-npo-type',
         `"${type}" is not a valid npo type. Only ${Object.values(TYPE)} are valid.`
       );
     }
-    if (!isValidSector) {
+    if (!isValidSector(sector)) {
       throw new NPOOrganizationError(
         'invalid-npo-sector',
         `"${sector}" is not a valid sector. Only ${Object.value(SECTOR)} are valid.`
