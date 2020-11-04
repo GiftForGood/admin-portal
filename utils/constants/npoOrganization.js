@@ -1,5 +1,6 @@
 export const TYPE = {
   IPC: 'IPC',
+  CHARITIES: 'Charities',
 };
 
 export const isValidType = (type) => {
