@@ -1,6 +1,7 @@
 export const TYPE = {
   IPC: 'IPC',
   CHARITIES: 'Charity Organisation',
+  GROUND_UP: 'Ground Up',
 };
 
 export const isValidType = (type) => {
@@ -23,6 +24,7 @@ export const SECTOR = {
   COMMUNITY: 'Community',
   ARTS_AND_HERITAGE: 'Arts and Heritage',
   SPORTS: 'Sports',
+  RELIGIOUS: 'Religious',
   OTHERS: 'Others',
 };
 
