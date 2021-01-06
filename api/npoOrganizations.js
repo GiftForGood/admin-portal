@@ -9,6 +9,7 @@ import {
   isValidSector,
 } from '@constants/npoOrganization';
 import { getLocations } from './common/location';
+import { isValidDate, isValidDateRange, getDate } from './common/dates';
 import NPOOrganizationError from './error/npoOrganizationError';
 
 const npoOrganizationsCollection = db.collection('npoOrganizations');
@@ -164,11 +165,35 @@ class NPOOrganizationsAPI {
    * @param {string} address The address of the npo
    * @param {string} sector The sector the npo belong to. Check constants/npoOrganization.js to see all the valid sector type
    * @param {string} classification The classification that the npo belong to
+   * @param {string} website The website of the npo
+   * @param {object} dateStarted (Only used for groundups) The date when the ground up membership started. Should follow the following format
+   *  @param {number} day
+   *  @param {number} month
+   *  @param {number} year
+   * @param {object} dateRenewed (Only used for groundups) The date when the ground up membership is renewed. Should follow the following format
+   *  @param {number} day
+   *  @param {number} month
+   *  @param {number} year
+   * @param {object} dateOfExpiry (Only used for groundups) The date when the ground up membership is going to be expired. Should follow the following format
+   *  @param {number} day
+   *  @param {number} month
+   *  @param {number} year
    * @throws {NPOOrganizationError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the new npo organization info
    */
-  async create(name, type, uen, address, sector, classification) {
+  async create(
+    name,
+    type,
+    uen,
+    address,
+    sector,
+    classification,
+    website = '',
+    dateStarted = null,
+    dateRenewed = null,
+    dateOfExpiry = null
+  ) {
     if (!isValidType(type)) {
       throw new NPOOrganizationError(
         'invalid-npo-type',
@@ -180,6 +205,12 @@ class NPOOrganizationsAPI {
         'invalid-npo-sector',
         `"${sector}" is not a valid sector. Only ${Object.value(SECTOR)} are valid.`
       );
+    }
+    if (type === TYPE.GROUND_UP) {
+      if (dateStarted === null || dateRenewed === null || dateOfExpiry === null) {
+        throw new NPOOrganizationError('invalid-dates', `all date fields are required for ${TYPE.GROUND_UP}`);
+      }
+      this._validateGroundUpDates(dateStarted, dateRenewed, dateOfExpiry);
     }
 
     const org = await this.getByName(name);
@@ -207,24 +238,59 @@ class NPOOrganizationsAPI {
       sector: sector,
       classification: classification,
     };
-    await newOrganization.set(data);
+    if (website !== '') {
+      data['website'] = website;
+    }
 
+    if (type === TYPE.GROUND_UP) {
+      data['dateStarted'] = getDate(dateStarted);
+      data['dateRenewed'] = getDate(dateRenewed);
+      data['dateOfExpiry'] = getDate(dateOfExpiry);
+    }
+
+    await newOrganization.set(data);
     return newOrganization.get();
   }
 
   /**
    * Update a npo organization information
+   * @param {string} id The id of the npo
    * @param {string} name The name of the npo organization. Should be unique
+   * @param {string} address The address of the npo
+   * @param {string} classification The classification that the npo belong to
+   * @param {string} sector The sector the npo belong to. Check constants/npoOrganization.js to see all the valid sector type
    * @param {string} type The type of npo organization. Check constants/npoOrganization.js to see all the valid type
    * @param {string} uen The UEN number
-   * @param {string} address The address of the npo
-   * @param {string} sector The sector the npo belong to. Check constants/npoOrganization.js to see all the valid sector type
-   * @param {string} classification The classification that the npo belong to
+   * @param {string} website The website of the npo
+   * @param {object} dateStarted (Only used for groundups) The date when the ground up membership started. Should follow the following format
+   *  @param {number} day
+   *  @param {number} month
+   *  @param {number} year
+   * @param {object} dateRenewed (Only used for groundups) The date when the ground up membership is renewed. Should follow the following format
+   *  @param {number} day
+   *  @param {number} month
+   *  @param {number} year
+   * @param {object} dateOfExpiry (Only used for groundups) The date when the ground up membership is going to be expired. Should follow the following format
+   *  @param {number} day
+   *  @param {number} month
+   *  @param {number} year
    * @throws {NPOOrganizationError}
    * @throws {FirebaseError}
    * @return {object} A firebase document of the updated npo organization info
    */
-  async update(id, name, address, classification, sector, type, uen) {
+  async update(
+    id,
+    name,
+    address,
+    classification,
+    sector,
+    type,
+    uen,
+    website = '',
+    dateStarted = null,
+    dateRenewed = null,
+    dateOfExpiry = null
+  ) {
     if (!isValidType(type)) {
       throw new NPOOrganizationError(
         'invalid-npo-type',
@@ -236,6 +302,12 @@ class NPOOrganizationsAPI {
         'invalid-npo-sector',
         `"${sector}" is not a valid sector. Only ${Object.value(SECTOR)} are valid.`
       );
+    }
+    if (type === TYPE.GROUND_UP) {
+      if (dateStarted === null || dateRenewed === null || dateOfExpiry === null) {
+        throw new NPOOrganizationError('invalid-dates', `all date fields are required for ${TYPE.GROUND_UP}`);
+      }
+      this._validateGroundUpDates(dateStarted, dateRenewed, dateOfExpiry);
     }
 
     const ref = npoOrganizationsCollection.doc(id);
@@ -270,9 +342,39 @@ class NPOOrganizationsAPI {
       sector: sector,
       classification: classification,
     };
+    if (website !== '') {
+      data['website'] = website;
+    }
+
+    if (type === TYPE.GROUND_UP) {
+      data['dateStarted'] = getDate(dateStarted);
+      data['dateRenewed'] = getDate(dateRenewed);
+      data['dateOfExpiry'] = getDate(dateOfExpiry);
+    }
 
     await ref.update(data);
     return ref.get();
+  }
+
+  _validateGroundUpDates(dateStarted, dateRenewed, dateOfExpiry) {
+    if (!isValidDate(dateStarted)) {
+      throw new NPOOrganizationError('invalid-date', `dateStarted is not a valid date`);
+    }
+    if (!isValidDate(dateRenewed)) {
+      throw new NPOOrganizationError('invalid-date', `dateRenewed is not a valid date`);
+    }
+    if (!isValidDate(dateOfExpiry)) {
+      throw new NPOOrganizationError('invalid-date', `dateOfExpiry is not a valid date`);
+    }
+    if (!isValidDateRange(dateStarted, dateRenewed, 0)) {
+      throw new NPOOrganizationError('invalid-date-range', `dateRenewed should be after dateStarted`);
+    }
+    if (!isValidDateRange(dateStarted, dateOfExpiry, 0)) {
+      throw new NPOOrganizationError('invalid-date-range', `dateOfExpiry should be at least one day after dateStarted`);
+    }
+    if (!isValidDateRange(dateRenewed, dateOfExpiry, 0)) {
+      throw new NPOOrganizationError('invalid-date-range', `dateOfExpiry should be at least one day after dateRenewed`);
+    }
   }
 }
 
