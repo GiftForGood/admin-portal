@@ -58,3 +58,14 @@ export const getMonth = (timeInMilliSeconds) => {
 export const getYear = (timeInMilliSeconds) => {
   return moment(timeInMilliSeconds).format('YYYY');
 };
+
+export const isExpiring = (timeInMilliSeconds) => {
+  const now = moment();
+  const given = moment(timeInMilliSeconds);
+  const diff = given.diff(now, 'days');
+  if (diff <= 30) {
+    return true;
+  }
+
+  return false;
+};
