@@ -41,9 +41,9 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
         sector: npoOrganization.sector,
         classification: npoOrganization.classification,
         website: npoOrganization.website,
-        dateStarted: new Date(npoOrganization?.dateStarted?.toMillis()),
-        dateRenewed: new Date(npoOrganization?.dateRenewed?.toMillis()),
-        dateOfExpiry: new Date(npoOrganization?.dateOfExpiry?.toMillis()),
+        dateStarted: npoOrganization.dateStarted ? new Date(npoOrganization?.dateStarted?.toMillis()) : new Date(),
+        dateRenewed: npoOrganization.dateRenewed ? new Date(npoOrganization?.dateRenewed?.toMillis()) : new Date(),
+        dateOfExpiry: npoOrganization.dateOfExpiry ? new Date(npoOrganization?.dateOfExpiry?.toMillis()) : new Date(),
       };
       setEditNpoOrganization(editNpoOrganization);
     }
@@ -137,21 +137,21 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
       dateOfExpiry,
     } = values;
     const groundUpDateStarted = {
-      day: dateStarted.getDate(),
-      month: dateStarted.getMonth() + 1,
-      year: dateStarted.getFullYear(),
+      day: dateStarted?.getDate(),
+      month: dateStarted?.getMonth() + 1,
+      year: dateStarted?.getFullYear(),
     };
 
     const groundUpDateRenewed = {
-      day: dateRenewed.getDate(),
-      month: dateRenewed.getMonth() + 1,
-      year: dateRenewed.getFullYear(),
+      day: dateRenewed?.getDate(),
+      month: dateRenewed?.getMonth() + 1,
+      year: dateRenewed?.getFullYear(),
     };
 
     const groundUpDateOfExpiry = {
-      day: dateOfExpiry.getDate(),
-      month: dateOfExpiry.getMonth() + 1,
-      year: dateOfExpiry.getFullYear(),
+      day: dateOfExpiry?.getDate(),
+      month: dateOfExpiry?.getMonth() + 1,
+      year: dateOfExpiry?.getFullYear(),
     };
 
     api.npoOrganizations
