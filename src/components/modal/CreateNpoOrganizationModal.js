@@ -41,9 +41,9 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
         sector: npoOrganization.sector,
         classification: npoOrganization.classification,
         website: npoOrganization.website,
-        dateStarted: new Date(npoOrganization.dateStarted.toMillis()),
-        dateRenewed: new Date(npoOrganization.dateRenewed.toMillis()),
-        dateOfExpiry: new Date(npoOrganization.dateOfExpiry.toMillis()),
+        dateStarted: new Date(npoOrganization?.dateStarted?.toMillis()),
+        dateRenewed: new Date(npoOrganization?.dateRenewed?.toMillis()),
+        dateOfExpiry: new Date(npoOrganization?.dateOfExpiry?.toMillis()),
       };
       setEditNpoOrganization(editNpoOrganization);
     }
