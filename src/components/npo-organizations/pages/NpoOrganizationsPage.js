@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Stack, Button, InputField } from '@kiwicom/orbit-components/';
+import { Stack, Button, InputField, Text } from '@kiwicom/orbit-components/';
 import Table, { TableHead, TableBody, TableRow, TableCell } from '@kiwicom/orbit-components/lib/Table';
 import api from '@api';
 import Filter from '../modules/Filter';
@@ -7,6 +7,7 @@ import { ORDER_BY } from '@constants/npoOrganization';
 import CreateNpoOrganizationModal from '@components/modal/CreateNpoOrganizationModal';
 import { ToastContainer, toast } from 'react-toastify';
 import styled from 'styled-components';
+import { getFormattedDate, isExpiring } from '@utils/time/time';
 
 const SearchContainer = styled.div`
   width: 400px;
@@ -147,6 +148,19 @@ const NpoOrganizationsPage = () => {
             <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
               Type
             </TableCell>
+
+            <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+              Date Started
+            </TableCell>
+
+            <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+              Date Renewed
+            </TableCell>
+
+            <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+              Date of Expiry
+            </TableCell>
+
             <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
               Action
             </TableCell>
@@ -172,6 +186,34 @@ const NpoOrganizationsPage = () => {
                 <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
                   {appSnapshot.data().type}
                 </TableCell>
+
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {appSnapshot.data().dateStarted ? getFormattedDate(appSnapshot.data().dateStarted?.toMillis()) : null}
+                </TableCell>
+
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  {appSnapshot.data().dateRenewed ? getFormattedDate(appSnapshot.data().dateRenewed?.toMillis()) : null}
+                </TableCell>
+
+                <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
+                  <Text
+                    type={
+                      appSnapshot.data().dateOfExpiry
+                        ? isExpiring(appSnapshot.data()?.dateOfExpiry?.toMillis())
+                          ? 'critical'
+                          : 'primary'
+                        : null
+                    }
+                  >
+                    {appSnapshot.data().dateOfExpiry ? (
+                      <>
+                        {getFormattedDate(appSnapshot.data().dateOfExpiry?.toMillis())}
+                        {isExpiring(appSnapshot.data().dateOfExpiry?.toMillis()) ? 'Expiring soon' : null}
+                      </>
+                    ) : null}
+                  </Text>
+                </TableCell>
+
                 <TableCell align="center" verticalAlign="baseline" whiteSpace="nowrap">
                   <Stack direction="row" justify="center">
                     <Button size="small" onClick={() => onShowEditModal(appSnapshot.data())}>

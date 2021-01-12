@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { TYPE, SECTOR } from '@constants/npoOrganization';
-import { Alert, Select, InputField, Button, Heading, Stack } from '@kiwicom/orbit-components/lib';
+import { Alert, Select, InputField, Button, Heading, Stack, Text } from '@kiwicom/orbit-components/lib';
 import Modal, { ModalSection, ModalFooter } from '@kiwicom/orbit-components/lib/Modal';
 import api from '@api';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import DatePicker from 'react-datepicker';
+import moment from 'moment';
 
 const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoOrganization, rerenderTable }) => {
   if (!show) {
@@ -16,6 +18,10 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
   const [alertType, setAlertType] = useState('');
   const [alertDescription, setAlertDescription] = useState('');
   const [editNpoOrganization, setEditNpoOrganization] = useState(null);
+  const [isGroundUp, setIsGroundUp] = useState(false);
+
+  //tempo
+  const [todayDate, setTodayDate] = useState(new Date());
 
   const displayAlert = (title, description, type) => {
     setShowAlert(true);
@@ -34,6 +40,10 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
         address: npoOrganization.address,
         sector: npoOrganization.sector,
         classification: npoOrganization.classification,
+        website: npoOrganization.website,
+        dateStarted: npoOrganization.dateStarted ? new Date(npoOrganization?.dateStarted?.toMillis()) : new Date(),
+        dateRenewed: npoOrganization.dateRenewed ? new Date(npoOrganization?.dateRenewed?.toMillis()) : new Date(),
+        dateOfExpiry: npoOrganization.dateOfExpiry ? new Date(npoOrganization?.dateOfExpiry?.toMillis()) : new Date(),
       };
       setEditNpoOrganization(editNpoOrganization);
     }
@@ -48,8 +58,49 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
   };
 
   const handleCreateNpoOrganization = (values) => {
+    const {
+      name,
+      type,
+      uen,
+      address,
+      sector,
+      classification,
+      website,
+      dateStarted,
+      dateRenewed,
+      dateOfExpiry,
+    } = values;
+    const groundUpDateStarted = {
+      day: dateStarted.getDate(),
+      month: dateStarted.getMonth() + 1,
+      year: dateStarted.getFullYear(),
+    };
+
+    const groundUpDateRenewed = {
+      day: dateRenewed.getDate(),
+      month: dateRenewed.getMonth() + 1,
+      year: dateRenewed.getFullYear(),
+    };
+
+    const groundUpDateOfExpiry = {
+      day: dateOfExpiry.getDate(),
+      month: dateOfExpiry.getMonth() + 1,
+      year: dateOfExpiry.getFullYear(),
+    };
+
     api.npoOrganizations
-      .create(values.name, values.type, values.uen, values.address, values.sector, values.classification)
+      .create(
+        name,
+        type,
+        uen,
+        address,
+        sector,
+        classification,
+        website,
+        groundUpDateStarted,
+        groundUpDateRenewed,
+        groundUpDateOfExpiry
+      )
       .then(() => {
         onHide();
         showToast();
@@ -73,15 +124,49 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
   };
 
   const handleEditNpoOrganization = (values) => {
+    const {
+      name,
+      type,
+      uen,
+      address,
+      sector,
+      classification,
+      website,
+      dateStarted,
+      dateRenewed,
+      dateOfExpiry,
+    } = values;
+    const groundUpDateStarted = {
+      day: dateStarted?.getDate(),
+      month: dateStarted?.getMonth() + 1,
+      year: dateStarted?.getFullYear(),
+    };
+
+    const groundUpDateRenewed = {
+      day: dateRenewed?.getDate(),
+      month: dateRenewed?.getMonth() + 1,
+      year: dateRenewed?.getFullYear(),
+    };
+
+    const groundUpDateOfExpiry = {
+      day: dateOfExpiry?.getDate(),
+      month: dateOfExpiry?.getMonth() + 1,
+      year: dateOfExpiry?.getFullYear(),
+    };
+
     api.npoOrganizations
       .update(
         npoOrganization.id,
-        values.name,
-        values.address,
-        values.classification,
-        values.sector,
-        values.type,
-        values.uen
+        name,
+        address,
+        classification,
+        sector,
+        type,
+        uen,
+        website,
+        groundUpDateStarted,
+        groundUpDateRenewed,
+        groundUpDateOfExpiry
       )
       .then(() => {
         onHide();
@@ -112,6 +197,10 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
     address: Yup.string().required('Required'),
     sector: Yup.string().required('Required'),
     classification: Yup.string().required('Required'),
+    website: Yup.string().required('Required').url(),
+    dateStarted: Yup.date(),
+    dateRenewed: Yup.date(),
+    dateOfExpiry: Yup.date(),
   });
 
   const formik = useFormik({
@@ -122,6 +211,10 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
       address: '',
       sector: '',
       classification: '',
+      website: '',
+      dateStarted: todayDate,
+      dateRenewed: todayDate,
+      dateOfExpiry: todayDate,
     },
     validationSchema: validationSchema,
     enableReinitialize: true,
@@ -180,6 +273,49 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
               {...formik.getFieldProps('type')}
               error={formik.touched.type && formik.errors.type ? formik.errors.type : ''}
             />
+
+            {formik.values.type === TYPE.GROUND_UP ? (
+              <>
+                <Stack spacing="none">
+                  <Text>Date Started (GroundUps only)</Text>
+                  <DatePicker
+                    selected={formik.values.dateStarted}
+                    onChange={(date) => {
+                      formik.setFieldValue('dateStarted', date);
+                    }}
+                    dateFormat="dd/MM/yyyy"
+                    showYearDropdown
+                    dateFormatCalendar="dd/MM/yyyy"
+                  />
+                </Stack>
+                <Stack spacing="none">
+                  <Text>Date Renewed (GroundUps only)</Text>
+                  <DatePicker
+                    selected={formik.values.dateRenewed}
+                    onChange={(date) => {
+                      formik.setFieldValue('dateRenewed', date);
+                    }}
+                    dateFormat="dd/MM/yyyy"
+                    showYearDropdown
+                    dateFormatCalendar="dd/MM/yyyy"
+                  />
+                </Stack>
+                <Stack spacing="none">
+                  <Text>Date of Expiry (GroundUps only)</Text>
+
+                  <DatePicker
+                    selected={formik.values.dateOfExpiry}
+                    onChange={(date) => {
+                      formik.setFieldValue('dateOfExpiry', date);
+                    }}
+                    dateFormat="dd/MM/yyyy"
+                    showYearDropdown
+                    dateFormatCalendar="dd/MM/yyyy"
+                  />
+                </Stack>
+              </>
+            ) : null}
+
             <Select
               disabled={formik.isSubmitting}
               name="sector"
@@ -195,6 +331,7 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
               {...formik.getFieldProps('sector')}
               error={formik.touched.sector && formik.errors.sector ? formik.errors.sector : ''}
             />
+
             <InputField
               disabled={formik.isSubmitting}
               type="text"
@@ -204,6 +341,17 @@ const CreateNpoOrganizationModal = ({ show, onHide, title, showToast, mode, npoO
               error={formik.touched.classification && formik.errors.classification ? formik.errors.classification : ''}
               {...formik.getFieldProps('classification')}
             />
+
+            <InputField
+              disabled={formik.isSubmitting}
+              type="text"
+              label="Website"
+              name="website"
+              placeholder="Website"
+              error={formik.touched.website && formik.errors.website ? formik.errors.website : ''}
+              {...formik.getFieldProps('website')}
+            />
+
             {showAlert ? (
               <Alert icon title={alertTitle} type={alertType}>
                 {alertDescription}
