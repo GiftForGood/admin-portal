@@ -23,15 +23,15 @@ if (!firebase.apps.length) {
 }
 
 const firebaseAuth = firebase.auth();
-let db = firebase.firestore();
+const db = firebase.firestore();
 const firebaseStorage = firebase.storage();
 
-// Use emulator when it's localhost (firestore)
+// Use emulator when it's localhost
 if (process.env.NODE_ENV === 'development') {
-  db.settings({
-    host: 'localhost:8080',
-    ssl: false,
-  });
+  db.useEmulator('localhost', 8080); // firestore
+  if (process.env.ENABLE_AUTH_EMULATOR === 'true') {
+    firebaseAuth.useEmulator('http://localhost:9099/'); // Auth
+  }
 }
 
 export { firebaseAuth, db, firebaseStorage, firebase };
